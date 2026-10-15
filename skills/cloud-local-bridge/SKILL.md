@@ -1,11 +1,12 @@
 ---
 name: cloud-local-bridge
 description: >
-  Hand work between the user's cloud sessions (claude.ai/code) and local sessions (Claude Desktop,
-  `claude remote-control`) and get the result back without the user naming sessions. Use when a
-  cloud session needs something only the user's machine can do (browser, OAuth sign-in, desktop
-  apps, local files) — "delegate to a local agent", "hand this to my local session" — and when a local session
-  receives a `<cross-session-message from-session="session_…">` or is told to "send it back".
+  Hand work between the user's cloud sessions (Claude Code on the web, claude.ai/code) and local
+  sessions (Claude Desktop, `claude remote-control`) and get the result back without the user naming
+  sessions. Use when a cloud session needs something only the user's machine can do (browser, OAuth
+  sign-in, desktop apps, local files, local MCP servers) — "delegate to a local agent", "hand this to
+  my local session", "run this on my computer" — and when a local session receives a
+  `<cross-session-message from-session="session_…">` or is told to "send it back".
 ---
 
 # Cloud-local bridge

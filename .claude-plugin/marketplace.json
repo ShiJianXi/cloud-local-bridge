@@ -8,7 +8,20 @@
     {
       "name": "cloud-local-bridge",
       "source": "./",
-      "description": "Hand work from a Claude Code cloud session to a local session and get the result back."
+      "description": "Hand work from a Claude Code cloud session (claude.ai/code) to a local Claude Desktop or Remote Control session and get the result back, without naming sessions by hand.",
+      "category": "productivity",
+      "tags": [
+        "claude-code",
+        "claude-code-on-the-web",
+        "remote-control",
+        "claude-desktop",
+        "cloud-sessions",
+        "local-sessions",
+        "cross-session-messaging",
+        "handoff",
+        "delegation",
+        "sendmessage"
+      ]
     }
   ]
 }

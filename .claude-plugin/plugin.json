@@ -1,7 +1,8 @@
 {
   "name": "cloud-local-bridge",
-  "version": "1.2.0",
-  "description": "Hand work from a Claude Code cloud session to a local session and get the result back, without naming sessions by hand.",
+  "displayName": "Cloud Local Bridge",
+  "version": "1.2.1",
+  "description": "Hand work from a Claude Code cloud session (claude.ai/code) to a local Claude Desktop or Remote Control session and get the result back, without naming sessions by hand.",
   "author": {
     "name": "ShiJianXi"
   },
@@ -9,10 +10,18 @@
   "repository": "https://github.com/ShiJianXi/cloud-local-bridge",
   "license": "MIT",
   "keywords": [
+    "claude-code",
+    "claude-code-on-the-web",
     "remote-control",
+    "claude-desktop",
     "cloud-sessions",
-    "cross-session",
-    "handoff"
+    "local-sessions",
+    "cross-session-messaging",
+    "handoff",
+    "delegation",
+    "sendmessage"
   ],
-  "privacyPolicyUrl": "https://github.com/ShiJianXi/cloud-local-bridge/blob/main/PRIVACY.md"
+  "privacyPolicyUrl": "https://github.com/ShiJianXi/cloud-local-bridge/blob/main/PRIVACY.md",
+  "documentationUrl": "https://github.com/ShiJianXi/cloud-local-bridge#readme",
+  "supportUrl": "https://github.com/ShiJianXi/cloud-local-bridge/issues"
 }

@@ -1,18 +1,21 @@
 # cloud-local-bridge
 
-A Claude Code skill for handing work from a cloud session (claude.ai/code) to a local session
-(Claude Desktop or `claude remote-control`) and getting the result back, without you naming either
-session by hand.
+A Claude Code plugin and skill for handing work from a cloud session (Claude Code on the web,
+claude.ai/code) to a local session on your computer (Claude Desktop or `claude remote-control`) and
+getting the result back, without you naming either session by hand. Use it when a cloud session
+needs your browser, an OAuth sign-in, a desktop app, local files or a local MCP server.
 
 ## The problem it fixes
 
 Cloud sessions can't use your browser, run OAuth sign-ins or reach local files, so you delegate
 that part to a local session. Without help, two things go wrong:
 
-- **The reply gets lost.** A message from a cloud session tells the local session to reply through
-  a "Claude Code Remote MCP" tool, using the cloud session's `session_…` id. Local sessions don't
-  have that tool, and the id doesn't resolve. Only `SendMessage` to the cloud session's **title**,
-  as `ListAgents` prints it, gets through.
+- **The reply gets lost.** A message from a cloud session tells the local session to reply with
+  "the send_message tool of the Claude Code Remote MCP server", using the cloud session's
+  `session_…` id. Local sessions don't have that tool, and the id doesn't resolve: `SendMessage`
+  fails with `No agent named 'session_…' is reachable.` and `mcp__ccd_session_mgmt__send_message`
+  with `session session_… not found. (delivery: undelivered)`. Only `SendMessage` to the cloud
+  session's **title**, as `ListAgents` prints it, gets through.
 - **The local session isn't found.** It has to be open, unarchived and connected to Remote
   Control. Desktop sessions archive themselves when their PR closes, and terminal sessions only
   show up when started with `claude remote-control`.
