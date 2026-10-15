@@ -52,6 +52,24 @@ adding marketplaces.
 
 Use one way per account. The claude.ai plugin plus a skill upload loads the skill twice.
 
+### Optional: start local sessions from claude.ai
+
+When the cloud session asks which local session to use, you can pick **New local session**. To
+start that session from claude.ai/code or your phone instead of at your computer, set the computer
+up once in either of these ways:
+
+- **Claude Desktop:** in **Settings → Claude Code**, turn on **Use this computer from your phone
+  and claude.ai** and add your project folders under it. It works while the app is open and the
+  computer is awake. The docs describe this switch for Claude Projects, so it may not appear on
+  every plan.
+- **Terminal:** in the project folder, run
+  `claude remote-control --spawn worktree --chrome` and leave it running. `--spawn worktree` gives
+  each new session its own git worktree, and `--chrome` lets those sessions use your browser.
+
+Then start a new session on claude.ai/code and pick your computer in its Remote Control menu.
+Anyone signed in to your claude.ai account can start sessions in those folders, so keep the list
+short.
+
 ## Examples
 
 1. **Cloud session needs a browser sign-in.** In a cloud session, type: "This needs an OAuth

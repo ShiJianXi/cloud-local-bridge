@@ -50,12 +50,19 @@ received a `<cross-session-message from-session="session_…">` is the **receive
    - With no local rows, offer **New local session** and **Paste the brief myself**. For the
      second, print the full brief with its header (step 4) for the user to paste, and stop.
 3. **New local session.** With a start tool, use it in the project folder, not in
-   bypass-permissions mode. Without one, give the user one of these and then ask with
+   bypass-permissions mode. Without one, give the user these ways and then ask with
    `AskUserQuestion` whether it is open (**It's open** / **Cancel**):
-   - Claude Desktop: a new Code session in the project folder, with Remote Control on for it, in
-     any permission mode but bypass.
-   - Terminal: `claude remote-control` in the project folder. Add `--chrome` when the task needs
-     the browser: sessions started from claude.ai/code on that server begin with Chrome off.
+   - From claude.ai/code or the Claude app, without going to the computer: start a new session and
+     pick the computer in its Remote Control menu. This works only if the computer is set up for
+     it: Claude Desktop with **Settings > Claude Code > Use this computer from your phone and
+     claude.ai** on and the project folder added under it, or `claude remote-control --spawn
+     worktree` left running in the project folder.
+   - At the computer, in Claude Desktop: a new Code session in the project folder, with Remote
+     Control on for it, in any permission mode but bypass.
+   - At the computer, in a terminal: `claude remote-control` in the project folder.
+
+   Add `--chrome` to `claude remote-control` when the task needs the browser: the sessions it
+   starts begin with Chrome off.
 
    Then run `ListAgents` again and take the local row that was not there in step 1. Exactly one new
    row: use it and tell the user its title. None or several: ask again with those rows as options.

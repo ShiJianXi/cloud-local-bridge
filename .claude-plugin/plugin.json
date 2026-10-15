@@ -1,6 +1,6 @@
 {
   "name": "cloud-local-bridge",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Hand work from a Claude Code cloud session to a local session and get the result back, without naming sessions by hand.",
   "author": {
     "name": "ShiJianXi"
