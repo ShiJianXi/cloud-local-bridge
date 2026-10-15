@@ -17,9 +17,10 @@ that part to a local session. Without help, two things go wrong:
   Control. Desktop sessions archive themselves when their PR closes, and terminal sessions only
   show up when started with `claude remote-control`.
 
-The skill gives both sides a fixed procedure. The sender puts a short header on the brief with its
-own title and ticket key. The receiver uses that header to find the reply target, and asks you to
-pick from a list only when that fails.
+The skill gives both sides a fixed procedure. The sender lists your local sessions and asks which
+one gets the work, or helps you open a new one. It puts a short header on the brief with its own
+title and the topic. The receiver uses that header to find the reply target, and asks you to pick
+from a list only when that fails.
 
 ## Install
 
@@ -54,17 +55,18 @@ Use one way per account. The claude.ai plugin plus a skill upload loads the skil
 ## Examples
 
 1. **Cloud session needs a browser sign-in.** In a cloud session, type: "This needs an OAuth
-   sign-in in my browser, delegate it to my local agent." The skill picks your open Desktop session
-   (it asks you to choose if there are several) and sends the brief with a `HANDOFF` header that
-   carries the cloud session's title and ticket key.
+   sign-in in my browser, delegate it to a local session." The skill lists your open local sessions
+   and asks which one to use, with **New local session** as another choice. For a new one, it starts
+   it if it can, or tells you how and waits until it appears. It then sends the brief with a
+   `HANDOFF` header that carries the cloud session's title and the topic.
 2. **Local session sends the result back.** The local session gets a
    `<cross-session-message from-session="session_…">`, does the task, then finds the cloud session
    in `ListAgents` by the title in the header and replies with `SendMessage`, so you don't have to
    name it.
 3. **The cloud session was renamed.** No `ListAgents` row matches the header's title any more. The
-   local session falls back to the cloud row whose title contains the ticket key, such as
-   `ABC-123`. If none matches, it asks you to pick from the cloud sessions it can see, and does not
-   send to a guess.
+   local session falls back to the one cloud row whose title matches the header's topic. If none
+   or several match, it asks you to pick from the cloud sessions it can see, and does not send to a
+   guess.
 
 ## Limits
 
