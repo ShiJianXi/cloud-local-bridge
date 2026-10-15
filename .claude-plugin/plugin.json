@@ -1,10 +1,10 @@
 {
-  "name": "session-handoff",
+  "name": "cloud-local-bridge",
   "version": "1.0.0",
   "description": "Hand work from a Claude Code cloud session to a local session and get the result back, without naming sessions by hand.",
   "author": { "name": "ShiJianXi" },
-  "homepage": "https://github.com/ShiJianXi/claude-session-handoff",
-  "repository": "https://github.com/ShiJianXi/claude-session-handoff",
+  "homepage": "https://github.com/ShiJianXi/cloud-local-bridge",
+  "repository": "https://github.com/ShiJianXi/cloud-local-bridge",
   "license": "MIT",
   "keywords": ["remote-control", "cloud-sessions", "cross-session", "handoff"]
 }

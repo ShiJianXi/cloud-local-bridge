@@ -1,4 +1,4 @@
-# claude-session-handoff
+# cloud-local-bridge
 
 A Claude Code skill for handing work from a cloud session (claude.ai/code) to a local session
 (Claude Desktop or `claude remote-control`) and getting the result back, without you naming either
@@ -26,16 +26,16 @@ pick from a list only when that fails.
 The skill has to be in both places: in the cloud session that delegates and in the local session
 that does the work.
 
-- **Cloud and local (recommended):** zip the `skills/session-handoff` folder and upload it in
+- **Cloud and local (recommended):** zip the `skills/cloud-local-bridge` folder and upload it in
   claude.ai → Customize → Skills. Account skills load in cloud sessions and sync to Desktop and
   signed-in terminal sessions.
 - **Local only, as a Claude Code plugin:**
 
   ```
-  /plugin install session-handoff --marketplace ShiJianXi/claude-session-handoff
+  /plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge
   ```
 
-  Or `npx skills add ShiJianXi/claude-session-handoff`, or copy `skills/session-handoff` into
+  Or `npx skills add ShiJianXi/cloud-local-bridge`, or copy `skills/cloud-local-bridge` into
   `~/.claude/skills/`. Cloud sessions don't load locally installed plugins or `~/.claude/skills/`.
 - **One repository's cloud sessions:** commit the folder under that repo's `.claude/skills/`.
 

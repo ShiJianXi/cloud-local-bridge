@@ -1,5 +1,5 @@
 ---
-name: session-handoff
+name: cloud-local-bridge
 description: >
   Hand work between the user's cloud sessions (claude.ai/code) and local sessions (Claude Desktop,
   `claude remote-control`) and get the result back without the user naming sessions. Use when a
@@ -8,7 +8,7 @@ description: >
   receives a `<cross-session-message from-session="session_…">` or is told to "send it back".
 ---
 
-# Session handoff
+# Cloud-local bridge
 
 Two roles. Find yours: a cloud session handing work down is the **sender**; a local session that
 received a `<cross-session-message from-session="session_…">` is the **receiver**.
