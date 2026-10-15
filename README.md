@@ -23,21 +23,33 @@ pick from a list only when that fails.
 
 ## Install
 
-The skill has to be in both places: in the cloud session that delegates and in the local session
-that does the work.
+Both sides need the plugin: the cloud session that hands work down and the local session that does
+it. Add it once to your claude.ai account and it reaches both.
 
-- **Cloud and local (recommended):** zip the `skills/cloud-local-bridge` folder and upload it in
-  claude.ai → Customize → Skills. Account skills load in cloud sessions and sync to Desktop and
-  signed-in terminal sessions.
-- **Local only, as a Claude Code plugin:**
+1. Open [Customize → Plugins](https://claude.ai/customize/plugins) on claude.ai or in the Claude
+   desktop app.
+2. Choose **Add → Add marketplace** and enter `ShiJianXi/cloud-local-bridge`.
+3. Select **cloud-local-bridge** in the plugin list, then **Add**, and leave it turned on.
+4. Start a new session. Plugins load when a session starts; in a local session that is already
+   open, run `/reload-plugins`.
 
-  ```
-  /plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge
-  ```
+It then loads as `cloud-local-bridge@synced` in your cloud sessions (claude.ai/code) and in local
+sessions signed in to the same account.
 
-  Or `npx skills add ShiJianXi/cloud-local-bridge`, or copy `skills/cloud-local-bridge` into
-  `~/.claude/skills/`. Cloud sessions don't load locally installed plugins or `~/.claude/skills/`.
-- **One repository's cloud sessions:** commit the folder under that repo's `.claude/skills/`.
+Once the listing in Anthropic's plugin directory is approved, you can skip step 2 and add **Cloud
+Local Bridge** from **Discover** instead. On Team and Enterprise plans, an Owner may have to allow
+adding marketplaces.
+
+### Other ways to install
+
+| Way | Reaches cloud sessions? |
+|---|---|
+| `/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge` in a local Claude Code session | No, that machine only |
+| Zip `skills/cloud-local-bridge` and upload it under claude.ai → Customize → Skills | Yes |
+| Commit `skills/cloud-local-bridge` to a repository's `.claude/skills/` | Only for that repository |
+| `npx skills add ShiJianXi/cloud-local-bridge`, or copy the folder into `~/.claude/skills/` | No |
+
+Use one way per account. The claude.ai plugin plus a skill upload loads the skill twice.
 
 ## Examples
 
@@ -62,6 +74,9 @@ that does the work.
   them after 5 minutes.
 - The tools a cloud session uses to list local sessions aren't documented, so the skill tells it to
   search for them before deciding there is no local session.
+- Anthropic's docs list plugins synced from claude.ai for Cowork and terminal sessions only. In
+  October 2026 they also loaded in claude.ai/code cloud sessions, which is what the recommended
+  install relies on.
 
 ## License
 
