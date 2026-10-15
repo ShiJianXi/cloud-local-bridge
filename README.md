@@ -29,9 +29,30 @@ that does the work.
 - **Cloud and local (recommended):** zip the `skills/session-handoff` folder and upload it in
   claude.ai → Customize → Skills. Account skills load in cloud sessions and sync to Desktop and
   signed-in terminal sessions.
-- **Local only:** `npx skills add ShiJianXi/claude-session-handoff`, or copy
-  `skills/session-handoff` into `~/.claude/skills/`. Cloud sessions don't read `~/.claude/skills/`.
+- **Local only, as a Claude Code plugin:**
+
+  ```
+  /plugin install session-handoff --marketplace ShiJianXi/claude-session-handoff
+  ```
+
+  Or `npx skills add ShiJianXi/claude-session-handoff`, or copy `skills/session-handoff` into
+  `~/.claude/skills/`. Cloud sessions don't load locally installed plugins or `~/.claude/skills/`.
 - **One repository's cloud sessions:** commit the folder under that repo's `.claude/skills/`.
+
+## Examples
+
+1. **Cloud session needs a browser sign-in.** In a cloud session, type: "This needs an OAuth
+   sign-in in my browser, delegate it to my local agent." The skill picks your open Desktop session
+   (it asks you to choose if there are several) and sends the brief with a `HANDOFF` header that
+   carries the cloud session's title and ticket key.
+2. **Local session sends the result back.** The local session gets a
+   `<cross-session-message from-session="session_…">`, does the task, then finds the cloud session
+   in `ListAgents` by the title in the header and replies with `SendMessage`, so you don't have to
+   name it.
+3. **The cloud session was renamed.** No `ListAgents` row matches the header's title any more. The
+   local session falls back to the cloud row whose title contains the ticket key, such as
+   `ABC-123`. If none matches, it asks you to pick from the cloud sessions it can see, and does not
+   send to a guess.
 
 ## Limits
 

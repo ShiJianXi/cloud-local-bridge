@@ -1,0 +1,14 @@
+{
+  "name": "shijianxi",
+  "description": "ShiJianXi's Claude Code plugins.",
+  "owner": {
+    "name": "ShiJianXi"
+  },
+  "plugins": [
+    {
+      "name": "session-handoff",
+      "source": "./",
+      "description": "Hand work from a Claude Code cloud session to a local session and get the result back."
+    }
+  ]
+}
