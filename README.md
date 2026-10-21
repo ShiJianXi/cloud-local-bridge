@@ -54,7 +54,7 @@ adding marketplaces.
 |---|---|
 | `/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge` in a local Claude Code session | No, that machine only |
 | Zip `skills/cloud-local-bridge` (and `skills/orchestrate`) and upload each under claude.ai → Customize → Skills | Yes |
-| Commit `skills/cloud-local-bridge` to a repository's `.claude/skills/` | Only for that repository |
+| Commit `skills/cloud-local-bridge` (and `skills/orchestrate`) to a repository's `.claude/skills/` | Only for that repository |
 | `npx skills add ShiJianXi/cloud-local-bridge`, or copy the folder into `~/.claude/skills/` | No |
 
 Use one way per account. The claude.ai plugin plus a skill upload loads the skill twice.
@@ -110,6 +110,11 @@ to orchestrate them: "orchestrate MMP-445, 446 and 447, one session each". That 
 The child sessions report to the orchestrator and never ask you directly, because nobody is
 watching them. If `send_later` is available, the orchestrator also checks on them on a schedule,
 because a session that finishes cleanly doesn't report back on its own.
+
+Start the orchestrator in a cloud session (claude.ai/code) in a permission mode other than
+**default**: cloud children inherit it, and in default mode they stall on prompts nobody sees. Local
+children each get their own git worktree. Don't archive the orchestrator until it has finished, or
+the children's reports go nowhere.
 
 ## Limits
 
