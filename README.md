@@ -6,6 +6,8 @@ getting the result back, without you naming either session by hand. Use it when 
 needs your browser, an OAuth sign-in, a desktop app, local files or a local MCP server. It can also
 run several related tasks in parallel sessions from one orchestrator session.
 
+![Illustration: a cloud session hands a Google sign-in to a local session, which signs in and sends the result back](assets/demo.gif)
+
 ## The problem it fixes
 
 Cloud sessions can't use your browser, run OAuth sign-ins or reach local files, so you delegate
