@@ -96,11 +96,11 @@ short.
 ## Orchestrate several sessions
 
 When you have several related tasks, such as three tickets that touch the same area, ask a session
-to orchestrate them: "orchestrate MMP-445, 446 and 447, one session each". That session then:
+to orchestrate them: "orchestrate these three issues, one session each". That session then:
 
 1. splits the work into one task per session, and points out tasks that edit the same files;
-2. does the shared work once, such as tracker moves or reading the code all the tasks touch,
-   with your approval;
+2. does the shared work once, such as updating issue status or reading the code all the tasks
+   touch, with your approval;
 3. asks whether the sessions should run in the cloud or on your computer, and recommends one;
 4. starts one session per task, each with its own branch and a brief that says what the others
    are doing;
