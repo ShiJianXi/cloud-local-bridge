@@ -3,7 +3,8 @@
 A Claude Code plugin and skill for handing work from a cloud session (Claude Code on the web,
 claude.ai/code) to a local session on your computer (Claude Desktop or `claude remote-control`) and
 getting the result back, without you naming either session by hand. Use it when a cloud session
-needs your browser, an OAuth sign-in, a desktop app, local files or a local MCP server.
+needs your browser, an OAuth sign-in, a desktop app, local files or a local MCP server. It can also
+run several related tasks in parallel sessions from one orchestrator session.
 
 ## The problem it fixes
 
@@ -36,17 +37,17 @@ it. Add it once to your claude.ai account and it reaches both.
 
 1. Open [Customize → Plugins](https://claude.ai/customize/plugins) on claude.ai or in the Claude
    desktop app.
-2. Choose **Add → Add marketplace** and enter `ShiJianXi/cloud-local-bridge`.
-3. Select **cloud-local-bridge** in the plugin list, then **Add**, and leave it turned on.
-4. Start a new session. Plugins load when a session starts; in a local session that is already
+2. Find **Cloud Local Bridge** under **Discover**, choose **Add**, and leave it turned on.
+3. Start a new session. Plugins load when a session starts; in a local session that is already
    open, run `/reload-plugins`.
 
-It then loads as `cloud-local-bridge@synced` in your cloud sessions (claude.ai/code) and in local
-sessions signed in to the same account.
+It then loads in your cloud sessions (claude.ai/code) and in local sessions signed in to the same
+account.
 
-Once the listing in Anthropic's plugin directory is approved, you can skip step 2 and add **Cloud
-Local Bridge** from **Discover** instead. On Team and Enterprise plans, an Owner may have to allow
-adding marketplaces.
+The Discover listing can be a release behind this repository while Anthropic reviews an update. To
+get the latest release, or if Discover doesn't show the plugin, choose **Add → Add marketplace** in
+step 2 instead, enter `ShiJianXi/cloud-local-bridge`, and add **cloud-local-bridge** from the
+plugin list. On Team and Enterprise plans, an Owner may have to allow adding marketplaces.
 
 ### Other ways to install
 
