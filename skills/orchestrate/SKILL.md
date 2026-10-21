@@ -3,8 +3,8 @@ name: orchestrate
 description: >
   Split related work across several Claude Code sessions (cloud or local, the user picks) and run
   them from this cloud session, which stays the user's only point of contact. Use when the user has
-  several related tasks or tickets that should be built independently but share context —
-  "orchestrate these", "start a session per ticket", "fan these out to 3 sessions", "you be the
+  several related tasks that should be built independently but share context —
+  "orchestrate these", "start a session per task", "fan these out to 3 sessions", "you be the
   orchestrator" — and when a child session replies to an `ORCHESTRATED` brief this session sent.
 ---
 
@@ -45,7 +45,7 @@ to the orchestrator, never to the user.
    independent: say which ones, and propose a merge order or folding them into one child. Confirm
    with the user when the split isn't obvious from the request.
 2. **Do the shared work once, here.** Read what all the tasks need, and make the shared writes
-   (issue status changes, shared config) here, with the user's approval, before any child starts.
+   (task status changes, shared config) here, with the user's approval, before any child starts.
    This is the point of one orchestrator: the children shouldn't each rediscover it or race to
    make it.
 3. **Ask where the children run**, with `AskUserQuestion`, unless the request already says:
