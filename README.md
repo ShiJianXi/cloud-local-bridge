@@ -25,6 +25,10 @@ one gets the work, or helps you open a new one. It puts a short header on the br
 title and the topic. The receiver uses that header to find the reply target, and asks you to pick
 from a list only when that fails.
 
+The plugin's second skill, `orchestrate`, is for several related tasks at once: one session acts
+as the orchestrator and starts a session per task. See [Orchestrate several
+sessions](#orchestrate-several-sessions).
+
 ## Install
 
 Both sides need the plugin: the cloud session that hands work down and the local session that does
@@ -49,7 +53,7 @@ adding marketplaces.
 | Way | Reaches cloud sessions? |
 |---|---|
 | `/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge` in a local Claude Code session | No, that machine only |
-| Zip `skills/cloud-local-bridge` and upload it under claude.ai → Customize → Skills | Yes |
+| Zip `skills/cloud-local-bridge` (and `skills/orchestrate`) and upload each under claude.ai → Customize → Skills | Yes |
 | Commit `skills/cloud-local-bridge` to a repository's `.claude/skills/` | Only for that repository |
 | `npx skills add ShiJianXi/cloud-local-bridge`, or copy the folder into `~/.claude/skills/` | No |
 
@@ -88,6 +92,24 @@ short.
    local session falls back to the one cloud row whose title matches the header's topic. If none
    or several match, it asks you to pick from the cloud sessions it can see, and does not send to a
    guess.
+
+## Orchestrate several sessions
+
+When you have several related tasks, such as three tickets that touch the same area, ask a session
+to orchestrate them: "orchestrate MMP-445, 446 and 447, one session each". That session then:
+
+1. splits the work into one task per session, and points out tasks that edit the same files;
+2. does the shared work once, such as tracker moves or reading the code all the tasks touch,
+   with your approval;
+3. asks whether the sessions should run in the cloud or on your computer, and recommends one;
+4. starts one session per task, each with its own branch and a brief that says what the others
+   are doing;
+5. passes on what each session reports, asks you the questions they can't answer, and sends your
+   answers back. You only talk to the orchestrator.
+
+The child sessions report to the orchestrator and never ask you directly, because nobody is
+watching them. If `send_later` is available, the orchestrator also checks on them on a schedule,
+because a session that finishes cleanly doesn't report back on its own.
 
 ## Limits
 
