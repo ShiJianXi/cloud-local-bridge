@@ -91,6 +91,12 @@ to the orchestrator, never to the user.
 7. **Relay and direct.** Match each incoming message's sender against the table. For each child
    message:
    - Milestone: pass it to the user in one line.
+   - Done (its `Done when` is met): pass the outcome on, then ask the user with `AskUserQuestion`
+     whether to archive that child's session. Options: **Keep it** (first; an archived child stops
+     answering PR reviews and CI on its branch) and **Archive it**. On Archive, a cloud child gets
+     `archive_session` with its `session_…` id; for a local child, tell the user to archive it in
+     Desktop or close its terminal, since `archive_session` can't reach it. Mark the row archived
+     in the table. Never archive without the user's answer.
    - Question: answer it from the shared context if the user already decided it; otherwise ask
      the user with `AskUserQuestion` and send the answer back to that child. If the answer needs a
      write the brief didn't allow, the user approves it in that child's session.
@@ -106,7 +112,8 @@ to the orchestrator, never to the user.
      [`assistant`]).
    - `FAILED`: read the last events, then resend a corrected brief or ask the user.
    - `REVIEW_READY` or `COMPLETED` with no report: read its last `result` and ask it for the report.
+     If that shows its `Done when` is met, handle it as Done in step 7.
 
    Stop re-arming when every child has finished or the user tells you to stop.
-9. **Finish** with one summary of the outcome per task and what is left for the user. Archive
-   children with `archive_session` only after the user says they're done with them.
+9. **Finish** with one summary of the outcome per task and what is left for the user. For each
+   child the user kept in step 7, ask once more whether to archive it now, as step 7 describes.
