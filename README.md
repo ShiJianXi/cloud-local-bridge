@@ -108,10 +108,12 @@ to orchestrate them: "orchestrate these three tasks, one session each". That ses
 4. starts one session per task, each with its own branch and a brief that says what the others
    are doing;
 5. passes on what each session reports, asks you the questions they can't answer, and sends your
-   answers back. You only talk to the orchestrator.
+   answers back;
+6. asks you, as each session finishes its task, whether to archive that session or keep it
+   (for example, to answer review comments on its PR).
 
-The child sessions report to the orchestrator and never ask you directly, because nobody is
-watching them. If `send_later` is available, the orchestrator also checks on them on a schedule,
+You only talk to the orchestrator. The child sessions report to it and never ask you directly,
+because nobody is watching them. If `send_later` is available, the orchestrator also checks on them on a schedule,
 because a session that finishes cleanly doesn't report back on its own.
 
 Start the orchestrator in a cloud session (claude.ai/code) in a permission mode other than
