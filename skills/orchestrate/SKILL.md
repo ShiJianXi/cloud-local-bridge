@@ -30,13 +30,16 @@ to the orchestrator, never to the user.
 - A child that finishes cleanly sends nothing on its own. Only a failed turn or a worker restart
   may arrive as a `<child-session-event>`. For a cloud child, read
   `get_session` → `status_bucket` (`SESSION_STATUS_BUCKET_` + `WORKING`, `BLOCKED`,
-  `REVIEW_READY`, `COMPLETED` or `FAILED`) and `list_events`. For a local child, read its
-  `ListAgents` row.
+  `REVIEW_READY`, `COMPLETED` or `FAILED`) and `list_events`. A local child started from here on a
+  bridge environment can be read the same way; for any other local child, read its `ListAgents`
+  row.
 - A message sent mid-run arrives as data from a peer, and the child won't take a new destructive
   step on it alone. Every write a child may need goes in its first brief.
 - An archived orchestrator stops receiving reports and check-ins.
-- Observed: `list_events` on a session that needs a trusted device fails with
-  `elevated_session_untrusted_device`. Don't retry; ask the user to open that session.
+- `create_session`, `list_events` or `get_session` on a session on the user's computer can fail
+  with `elevated_session_untrusted_device`. Call `confirm_repository_trust` with that refusal's
+  `content_digest`, which asks the user on a trusted device, then retry once. If they decline, ask
+  the user to open that session themselves.
 
 ## Steps
 
@@ -63,7 +66,9 @@ to the orchestrator, never to the user.
      repositories attaches them itself with `add_repo`; say which ones in its brief.
    - Local: for each task, follow the cloud-local-bridge skill's **Sender** steps 1–4, with one
      git worktree per child: `claude remote-control --spawn worktree`, a Desktop worktree session,
-     or `git worktree add`. Never put two children in the same checkout.
+     or `git worktree add`. Never put two children in the same checkout. The user picks the
+     approach there (start it from here on a bridge environment, or open it themselves); ask once
+     for all the children, not once per child, unless the user wants to pick per task.
 5. **The brief.** For a local child, the cloud-local-bridge `HANDOFF` header comes first (it
    carries Done when, Allowed and the reply route), followed by the lines below, without
    `Done when`, `Allowed` or `Reply`. For a cloud child, the brief starts with all of these lines:

@@ -1,7 +1,7 @@
 {
   "name": "cloud-local-bridge",
   "displayName": "Cloud Local Bridge",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Let Claude Code on the web use your computer: hand browser, OAuth sign-in, desktop-app and local-file steps from a claude.ai/code session to a local Claude Desktop or Remote Control session, and get the result back. Also runs several related tasks in parallel sessions from one orchestrator.",
   "author": {
     "name": "ShiJianXi"

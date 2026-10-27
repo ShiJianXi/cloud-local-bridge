@@ -27,6 +27,14 @@ received a `<cross-session-message from-session="session_…">` is the **receive
   Control. Desktop: a session joins when the app's "Connect new sessions to Remote Control" setting
   is on or the user turns it on for that session; with auto-archive on PR close, it disappears when
   its PR closes. Terminal: only `claude remote-control` (or `/remote-control` inside a session).
+- A computer running `claude remote-control --spawn worktree` shows up in the cloud's
+  `list_environments` as `kind: "bridge"`, named `<host>:<folder>:<id>`. `create_session` with
+  that `environment_id` starts a local session there in its own git worktree, without the user
+  doing anything. The first try per cloud session is refused with `elevated_session_untrusted_device`
+  until the user approves the card `confirm_repository_trust` shows them. That approval can't be
+  undone: it limits the cloud session to the user's trusted devices. A listed bridge can be stale:
+  its host has stopped, yet it still says `active`, and a session sent to it stays `PENDING` /
+  `disconnected`.
 - A local session in bypass-permissions mode holds messages from a cloud session; Desktop drops
   them after 5 minutes. Run the pickup session in any other mode.
 - Local → cloud delivery is never confirmed; the reply lands in the cloud session's own
@@ -39,25 +47,40 @@ received a `<cross-session-message from-session="session_…">` is the **receive
 
 1. **List the local sessions.** Run `ListAgents`; if it shows no local rows, `ToolSearch` for
    `list sessions remote control` and run what it finds before concluding there is none. Keep the
-   local / Desktop / Remote Control rows; step 3 compares against them. Also `ToolSearch` for
-   `start session` once: note whether a tool here can start a session on the user's machine.
-2. **Let the user choose, every time.** Never pick a row yourself, even when there is only one,
-   and never ask the user to type a session name. Ask with `AskUserQuestion`:
-   - up to three local rows, the likeliest first (same repository or topic, most recently active).
-     Label: the row's title. Description: what it appears to be working on. More rows than that:
-     the user can type another title under "Other".
-   - **New local session**: starts one with the tool from step 1 if there is one; otherwise the
-     user starts it (step 3).
-   - With no local rows, offer **New local session** and **Paste the brief myself**. For the
-     second, print the full brief with its header (step 4) for the user to paste, and stop.
-3. **New local session.** With a start tool, use it in the project folder, not in
-   bypass-permissions mode. Without one, give the user these ways and then ask with
-   `AskUserQuestion` whether it is open (**It's open** / **Cancel**):
+   local / Desktop / Remote Control rows; step 3b compares against them. Also run
+   `list_environments` (`ToolSearch` `list environments` if it isn't loaded) and keep the
+   `kind: "bridge"` rows; for each folder, the newest one is likeliest live.
+2. **Let the user choose, every time.** Never pick a row or an approach yourself, even when there
+   is only one, and never ask the user to type a session name. Ask with `AskUserQuestion`, four
+   options at most:
+   - up to two existing local rows, the likeliest first (same repository or topic, most recently
+     active). Label: the row's title. Description: what it appears to be working on. More rows
+     than that: the user can type another title under "Other".
+   - **Start one on `<host>:<folder>` for me** (step 3a), only when a bridge environment is
+     listed. More than one bridge: name the likeliest one here and let the user type another
+     under "Other". Description: a new session in its own worktree there, started from here; the
+     first time, the user approves a card on a trusted device, and that approval can't be undone.
+   - **I'll open one myself** (step 3b).
+   - With no existing rows, **Paste the brief myself** is offered too. For it, print the full
+     brief with its header (step 4) for the user to paste, and stop.
+3a. **Start it from here.** `create_session` with `environment_id` = the bridge, `title` = the
+   topic, `prompt` = the brief (step 4: header, then task). Don't pass `permission_mode:
+   "bypassPermissions"`. If it is refused with `elevated_session_untrusted_device`, call
+   `confirm_repository_trust` with the `content_digest` from the refusal, then retry once. If
+   `get_session` still shows `PENDING` / `disconnected` after about a minute, the bridge is stale:
+   `archive_session` it, tell the user its host isn't running (`claude remote-control --spawn
+   worktree` in that folder brings it back), and ask again from step 2. Once it runs, tell the
+   user its title. Skip step 4: the brief is already sent. Its reply comes as described in
+   step 4, and `list_events` / `get_session` on its `session_…` id show its progress and result
+   too. Send follow-ups there with `send_message`.
+3b. **The user opens one.** Give the user these ways, then ask with `AskUserQuestion` whether it is
+   open (**It's open** / **Cancel**):
    - From claude.ai/code or the Claude app, without going to the computer: start a new session and
      pick the computer in its Remote Control menu. This works only if the computer is set up for
      it: Claude Desktop with **Settings > Claude Code > Use this computer from your phone and
      claude.ai** on and the project folder added under it, or `claude remote-control --spawn
-     worktree` left running in the project folder.
+     worktree` left running in the project folder. Once that is running, step 3a also works next
+     time.
    - At the computer, in Claude Desktop: a new Code session in the project folder, with Remote
      Control on for it, in any permission mode but bypass.
    - At the computer, in a terminal: `claude remote-control` in the project folder.

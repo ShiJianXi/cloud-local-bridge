@@ -64,7 +64,7 @@ Use one way per account. The claude.ai plugin plus a skill upload loads the skil
 
 ### Optional: start local sessions from claude.ai
 
-When the cloud session asks which local session to use, you can pick **New local session**. To
+When the cloud session asks which local session to use, you can also have it open a new one. To
 start that session from claude.ai/code or your phone instead of at your computer, set the computer
 up once in either of these ways:
 
@@ -77,6 +77,14 @@ up once in either of these ways:
   each new session its own git worktree, and `--chrome` lets those sessions use your browser.
 
 Then start a new session on claude.ai/code and pick your computer in its Remote Control menu.
+
+While the terminal command is running, the cloud session can also start the local session by
+itself: it offers **Start one on `<computer>:<folder>` for me** next to **I'll open one myself**,
+and you pick one. The first time, Claude asks you to approve this on a trusted device. That
+approval can't be undone: it limits that cloud session to your trusted devices. Each session it
+starts gets its own git worktree under `.claude/worktrees/`. This avoids most "local session went
+inactive" failures, because a fresh session can be started when it's needed.
+
 Anyone signed in to your claude.ai account can start sessions in those folders, so keep the list
 short.
 
@@ -84,8 +92,8 @@ short.
 
 1. **Cloud session needs a browser sign-in.** In a cloud session, type: "This needs an OAuth
    sign-in in my browser, delegate it to a local session." The skill lists your open local sessions
-   and asks which one to use, with **New local session** as another choice. For a new one, it starts
-   it if it can, or tells you how and waits until it appears. It then sends the brief with a
+   and asks which one to use. Other choices: starting a new one on your computer itself, when
+   `claude remote-control --spawn worktree` is running there, or you opening one while it waits. It then sends the brief with a
    `HANDOFF` header that carries the cloud session's title and the topic.
 2. **Local session sends the result back.** The local session gets a
    `<cross-session-message from-session="session_…">`, does the task, then finds the cloud session
