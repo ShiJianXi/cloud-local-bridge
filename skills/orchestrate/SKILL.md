@@ -24,6 +24,9 @@ to the orchestrator, never to the user.
 - A cloud child starts from its prompt alone: it has none of this conversation. It can't be more
   permissive than this session. In `default` mode, every Edit or Bash call waits on a prompt nobody
   is watching. Never start a child in `plan` mode, for the same reason.
+- Children run in `auto` mode. Left to inherit, a child can come up in `acceptEdits` instead
+  (`auto` is tied to a trusted-device proof the child doesn't get), so always pass
+  `permission_mode` = `auto` to `create_session`.
 - A cloud child replies with `send_message` to the orchestrator's `session_…` id, and the reply
   arrives here as a new turn. A local child can't: it replies with `SendMessage` to the
   orchestrator's **title** as its `ListAgents` row shows it (see the cloud-local-bridge skill).
@@ -55,12 +58,16 @@ to the orchestrator, never to the user.
 
    Put the recommended option first, with "(Recommended)" in its label. If the tasks differ, the
    user can pick per task under "Other". For cloud children, if this session's `permission_mode`
-   is `default`, warn the user that the children will stall on prompts before going on.
+   isn't `auto`, warn the user that the children can't be started in `auto` (they can't be more
+   permissive than this session) and, in `default`, will stall on prompts, before going on.
 4. **Start the children.** Each one gets a new branch, never `main` or a branch another child uses.
    - Cloud: `create_session` per task with `title` = `<task> build`, `prompt` = the brief
      (step 5), `source_url` = the repository, `outcome_branch` = its branch, and
-     `extra_allowed_tools` = [`mcp__claude-code-remote__send_message`]. A child that needs more
-     repositories attaches them itself with `add_repo`; say which ones in its brief.
+     `extra_allowed_tools` = [`mcp__claude-code-remote__send_message`] and
+     `permission_mode` = `auto`. Then `get_session` the child: if its `permission_mode` isn't
+     `auto` (or the call was refused), tell the user which child runs in which mode, since only
+     they can switch it from the session's page. A child that needs more repositories attaches
+     them itself with `add_repo`; say which ones in its brief.
    - Local: for each task, follow the cloud-local-bridge skill's **Sender** steps 1–4, with one
      git worktree per child: `claude remote-control --spawn worktree`, a Desktop worktree session,
      or `git worktree add`. Never put two children in the same checkout.

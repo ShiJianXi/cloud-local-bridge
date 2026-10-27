@@ -116,8 +116,9 @@ You only talk to the orchestrator. The child sessions report to it and never ask
 because nobody is watching them. If `send_later` is available, the orchestrator also checks on them on a schedule,
 because a session that finishes cleanly doesn't report back on its own.
 
-Start the orchestrator in a cloud session (claude.ai/code) in a permission mode other than
-**default**: cloud children inherit it, and in default mode they stall on prompts nobody sees. Local
+Start the orchestrator in a cloud session (claude.ai/code) in **auto** mode: cloud children are
+started in auto mode, which they can't get if the orchestrator runs in a less permissive one, and in
+default mode they stall on prompts nobody sees. Local
 children each get their own git worktree. Don't archive the orchestrator until it has finished, or
 the children's reports go nowhere.
 
