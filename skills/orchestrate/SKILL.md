@@ -92,6 +92,9 @@ to the orchestrator, never to the user.
    Reply: send_message to <your session_… id>, never to the user. Send when: <milestones, e.g. PR
      open, CI green>, and when blocked on a decision. First line: one sentence with the outcome or
      the question.
+     If send_message is refused, call confirm_repository_trust with the refusal's content_digest
+     and retry once. If it is still refused, end your turn with the full report as your last
+     message.
    Never use AskUserQuestion: nobody watches this session. Send the question, end your turn, and
      the answer arrives as a new message.
    ```
@@ -119,7 +122,8 @@ to the orchestrator, never to the user.
      `SendMessage` to the row for a local one.
 8. **Check in.** If `send_later` is available, keep exactly one check-in pending, about 30
    minutes after the last activity. To move it, `delete_trigger` its `trigger_id`, then arm a new
-   one. When it fires, read each child's state as **Facts** describes:
+   one. When it fires, read each child's state as **Facts** describes, and read each child's
+   `post_turn_summary` from `get_session`: a refused report shows up there and nowhere else.
    - `BLOCKED`: tell the user which session needs them, and why (`list_events`, `kinds`
      [`assistant`]).
    - `FAILED`: read the last events, then resend a corrected brief or ask the user.
