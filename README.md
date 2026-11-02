@@ -8,6 +8,15 @@ run several related tasks in parallel sessions from one orchestrator session.
 
 ![Illustration: a cloud session hands a Google sign-in to a local session, which signs in and sends the result back](assets/demo.gif)
 
+## Usage
+
+From the Claude Code plugin directory, as of Oct 31, 2026. These numbers are a snapshot and are
+updated by hand.
+
+| Directory rank | Installs (all time) | Active accounts (28 days) | Uses (30 days) |
+|---|---|---|---|
+| #1,275 | 441 | 30 | 42 |
+
 ## The problem it fixes
 
 Cloud sessions can't use your browser, run OAuth sign-ins or reach local files, so you delegate
