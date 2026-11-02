@@ -144,5 +144,7 @@ leave the board as the record. It's private until the user shares it from the pa
 
 ## Evals
 
-`evals/evals.json` holds three cases: a small request that must not trigger the offer, a 5-task
-chain, and a child that fails mid-run. Rerun them after changing this file.
+The plugin's `evals/artifact-plan/` holds three cases for `claude plugin eval`: a small request
+that must not trigger the offer, a 5-task chain that must load this skill and offer a board, and
+a child that reports done while CI is red. Run `claude plugin eval . --tag artifact-plan` from the
+plugin root after changing this file.

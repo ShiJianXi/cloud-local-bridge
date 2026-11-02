@@ -50,8 +50,9 @@ to the orchestrator, never to the user.
    each one is done when. Tasks that touch the same files or depend on each other's output are not
    independent: say which ones, and propose a merge order or folding them into one child. Confirm
    with the user when the split isn't obvious from the request. With 3 or more tasks and any
-   dependency between them, the artifact-plan skill offers a plan board to track them; if the
-   user takes it, follow that skill for dispatch order and status updates alongside these steps.
+   dependency between them, load the `artifact-plan` skill now (Skill tool) and follow it: it
+   offers a plan board, and if the user takes it, it sets the dispatch order and status updates
+   alongside these steps.
 2. **Do the shared work once, here.** Read what all the tasks need, and make the shared writes
    (task status changes, shared config) here, with the user's approval, before any child starts.
    This is the point of one orchestrator: the children shouldn't each rediscover it or race to
