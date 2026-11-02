@@ -1,0 +1,277 @@
+<title>Plan Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: summary band, dependency graph by wave (left to right), task list, activity log. */
+:root {
+  --bg: #f5f6f8; --surface: #ffffff; --fg: #1b2230; --muted: #5c6678; --line: #d9dde5;
+  --accent: #2f5bd3;
+  --done: #1f8a5b; --done-bg: #e3f4ec;
+  --run: #2f5bd3; --run-bg: #e5ecfc;
+  --review: #7a4cc2; --review-bg: #efe8fa;
+  --ready: #9a6200; --ready-bg: #fbf0d9;
+  --wait: #6b7383; --wait-bg: #eceef2;
+  --fail: #c23a3a; --fail-bg: #fbe5e5;
+  --font-display: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #98a1b2; --line: #2c3442;
+  --accent: #7d9cf0;
+  --done: #5cc995; --done-bg: #173226; --run: #7d9cf0; --run-bg: #1c2a4a;
+  --review: #b393ea; --review-bg: #2b2140; --ready: #e0b057; --ready-bg: #3a2e14;
+  --wait: #a0a8b8; --wait-bg: #252c38; --fail: #ec7b7b; --fail-bg: #3d1d1d;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #98a1b2; --line: #2c3442;
+  --accent: #7d9cf0;
+  --done: #5cc995; --done-bg: #173226; --run: #7d9cf0; --run-bg: #1c2a4a;
+  --review: #b393ea; --review-bg: #2b2140; --ready: #e0b057; --ready-bg: #3a2e14;
+  --wait: #a0a8b8; --wait-bg: #252c38; --fail: #ec7b7b; --fail-bg: #3d1d1d;
+  color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-display); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px; }
+.wrap > * { min-width: 0; }
+h1 { font-size: 26px; line-height: 1.2; margin: 0; text-wrap: balance; font-weight: 700; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 12px; font-weight: 600; }
+.mono { font-family: var(--font-mono); font-size: 12.5px; }
+.muted { color: var(--muted); }
+header { display: grid; gap: 10px; }
+.eyebrow { display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--muted); font-size: 13px; }
+.summary { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bar { height: 8px; border-radius: 4px; background: var(--wait-bg); overflow: hidden; display: flex; flex: 1 1 240px; min-width: 0; }
+.bar span { display: block; height: 100%; }
+.counts { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 2px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.s-done { color: var(--done); background: var(--done-bg); }
+.s-in_progress { color: var(--run); background: var(--run-bg); }
+.s-review { color: var(--review); background: var(--review-bg); }
+.s-ready { color: var(--ready); background: var(--ready-bg); }
+.s-waiting { color: var(--wait); background: var(--wait-bg); }
+.s-failed { color: var(--fail); background: var(--fail-bg); }
+.graph { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.graph svg { display: block; }
+.graph text { font-family: var(--font-display); }
+.graph g[role="button"]:focus { outline: none; }
+.graph g[role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tasks { display: grid; gap: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.task { border-top: 1px solid var(--line); }
+.task:first-child { border-top: 0; }
+.task summary { display: grid; grid-template-columns: 16px 44px minmax(0, 1fr) auto; gap: 4px 12px; padding: 14px 16px; align-items: start; cursor: pointer; list-style: none; }
+.task summary::-webkit-details-marker { display: none; }
+.task summary::before { content: "›"; color: var(--muted); font-size: 18px; line-height: 1.1; transition: transform .15s; }
+.task[open] summary::before { transform: rotate(90deg); }
+.task summary:hover { background: var(--bg); }
+.task summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.task .title { font-weight: 600; }
+.task .hint { grid-column: 3 / 5; font-size: 13px; color: var(--muted); }
+.task .body { padding: 0 16px 16px 88px; display: grid; gap: 12px; }
+.task dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 16px; margin: 0; font-size: 13.5px; }
+.task dt { color: var(--muted); }
+.task dd { margin: 0; overflow-wrap: anywhere; }
+.task .note { font-size: 13.5px; padding: 10px 12px; background: var(--bg); border-radius: 8px; white-space: pre-wrap; }
+.task a { color: var(--accent); }
+.dep { display: inline-flex; gap: 6px; align-items: center; margin-right: 10px; }
+@media (prefers-reduced-motion: reduce) { .task summary::before { transition: none; } }
+.wave { grid-column: 1 / -1; padding: 8px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); background: var(--bg); border-top: 1px solid var(--line); }
+.wave:first-child { border-top: 0; border-radius: 10px 10px 0 0; }
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13.5px; }
+.log li { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; }
+.empty { padding: 32px 16px; text-align: center; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+@media (max-width: 560px) {
+  .task summary { grid-template-columns: 16px 36px minmax(0, 1fr); }
+  .task summary .pill { grid-column: 3; justify-self: start; }
+  .task .hint { grid-column: 3; }
+  .task .body { padding-left: 16px; }
+  .task dl { grid-template-columns: 1fr; gap: 0; }
+  .task dd { margin-bottom: 8px; }
+  .log li { grid-template-columns: 1fr; gap: 0; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow"><span id="orch">Plan board</span><span id="updated"></span></div>
+    <h1 id="goal">Loading the plan…</h1>
+    <div class="summary"><div class="bar" id="bar" aria-hidden="true"></div><div class="counts" id="counts"></div></div>
+  </header>
+
+  <section>
+    <h2>Order and dependencies</h2>
+    <div class="graph" id="graph"><div class="muted">The task graph appears here once the orchestrator adds tasks.</div></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section>
+    <h2>Tasks</h2>
+    <div class="tasks" id="tasks"><div class="empty">No tasks yet. The orchestrator writes them here when it splits the work.</div></div>
+  </section>
+
+  <section>
+    <h2>Activity</h2>
+    <ul class="log" id="log"><li class="muted">Nothing has happened yet.</li></ul>
+  </section>
+</div>
+
+<script>
+const LABEL = { done: "Done", in_progress: "In progress", review: "In review", ready: "Ready", waiting: "Waiting", failed: "Failed" };
+const ORDER = ["done", "review", "in_progress", "ready", "waiting", "failed"];
+const VAR = { done: "--done", in_progress: "--run", review: "--review", ready: "--ready", waiting: "--wait", failed: "--fail" };
+let tasks = [], meta = null, log = [];
+const openIds = new Set(); // expanded rows survive live re-renders
+function openTask(id) {
+  openIds.add(id);
+  const d = document.getElementById("task-" + id); if (!d) return;
+  d.open = true;
+  d.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const when = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); };
+
+// "todo" is the only stored not-started status; ready/waiting is derived from blockers.
+function effective(t, byId) {
+  if (t.status && t.status !== "todo") return t.status;
+  return (t.blockedBy || []).some((b) => byId[b] && byId[b].status !== "done") ? "waiting" : "ready";
+}
+// Wave = 1 + deepest blocker's wave. Guarded against cycles.
+function waves(byId) {
+  const memo = {};
+  const w = (id, seen) => {
+    if (memo[id] != null) return memo[id];
+    if (seen.has(id) || !byId[id]) return 0;
+    seen.add(id);
+    const bs = byId[id].blockedBy || [];
+    return (memo[id] = bs.length ? 1 + Math.max(...bs.map((b) => w(b, seen))) : 0);
+  };
+  Object.keys(byId).forEach((id) => w(id, new Set()));
+  return memo;
+}
+
+function render() {
+  if (meta) {
+    $("goal").textContent = meta.goal || "Untitled plan";
+    $("orch").textContent = meta.orchestrator ? "Orchestrator: " + meta.orchestrator : "Plan board";
+    if (meta.example) $("orch").textContent += " · example data";
+  }
+  const byId = Object.fromEntries(tasks.map((t) => [t.id, t]));
+  const wv = waves(byId);
+  tasks.forEach((t) => { t._s = effective(t, byId); t._w = wv[t.id] || 0; });
+  const latest = tasks.map((t) => t.updatedAt).filter(Boolean).sort().pop();
+  $("updated").textContent = latest ? "Updated " + when(latest) : "";
+
+  // Summary
+  const counts = {}; tasks.forEach((t) => (counts[t._s] = (counts[t._s] || 0) + 1));
+  const bar = $("bar"), cnt = $("counts"); bar.replaceChildren(); cnt.replaceChildren();
+  ORDER.forEach((s) => {
+    if (!counts[s]) return;
+    const seg = el("span"); seg.style.width = (100 * counts[s] / tasks.length) + "%"; seg.style.background = "var(" + VAR[s] + ")"; bar.append(seg);
+    cnt.append(el("span", "pill s-" + s, counts[s] + " " + LABEL[s].toLowerCase()));
+  });
+  if (!tasks.length) return;
+
+  renderGraph(byId);
+  const legend = $("legend"); legend.replaceChildren();
+  ORDER.forEach((s) => legend.append(el("span", "pill s-" + s, LABEL[s])));
+
+  // Task list, grouped by wave
+  const unblocks = {}; tasks.forEach((t) => (t.blockedBy || []).forEach((b) => (unblocks[b] = unblocks[b] || []).push(t.id)));
+  const list = $("tasks"); list.replaceChildren();
+  const sorted = [...tasks].sort((a, b) => a._w - b._w || (a.order ?? 0) - (b.order ?? 0) || a.id.localeCompare(b.id));
+  let lastW = -1;
+  sorted.forEach((t) => {
+    if (t._w !== lastW) { lastW = t._w; list.append(el("div", "wave", t._w === 0 ? "Wave 1 · can start now" : "Wave " + (t._w + 1) + " · after wave " + t._w)); }
+    const row = el("details", "task"); row.id = "task-" + t.id; row.open = openIds.has(t.id);
+    row.addEventListener("toggle", () => (row.open ? openIds.add(t.id) : openIds.delete(t.id)));
+    const sum = el("summary");
+    sum.append(el("span", "mono muted", t.id), el("span", "title", t.title || ""), el("span", "pill s-" + t._s, LABEL[t._s] || t._s));
+    const openBlockers = (t.blockedBy || []).filter((b) => byId[b] && byId[b].status !== "done");
+    if (openBlockers.length) sum.append(el("span", "hint", "Waiting on " + openBlockers.join(", ")));
+    else if (t.owner) sum.append(el("span", "hint", "Agent: " + t.owner));
+    row.append(sum);
+
+    // Expanded details
+    const body = el("div", "body"), dl = el("dl");
+    const field = (k, v) => { if (v == null || v === "") return; dl.append(el("dt", null, k)); const dd = el("dd"); typeof v === "string" ? (dd.textContent = v) : dd.append(v); dl.append(dd); };
+    const deps = (ids) => { const f = document.createDocumentFragment(); ids.forEach((id) => { const s = el("span", "dep"); const b = byId[id]; s.append(el("span", "mono", id)); if (b) s.append(el("span", null, b.title || "")); if (b) s.append(el("span", "pill s-" + b._s, LABEL[b._s])); f.append(s); }); return f; };
+    if (t.details) body.append(el("div", null, t.details));
+    field("Done when", t.doneWhen);
+    field("Wave", String(t._w + 1));
+    field("Blocked by", (t.blockedBy || []).length ? deps(t.blockedBy) : "Nothing, can start any time");
+    field("Unblocks", unblocks[t.id] ? deps(unblocks[t.id]) : "Nothing");
+    field("Evidence", t.evidence);
+    field("Agent", t.owner);
+    if (t.branch) field("Branch", el("span", "mono", t.branch));
+    if (t.pr && /^https:\/\/github\.com\//.test(t.pr)) { const a = el("a", null, t.pr.replace("https://github.com/", "")); a.href = t.pr; a.target = "_blank"; a.rel = "noopener"; field("Pull request", a); }
+    field("Last updated", t.updatedAt ? when(t.updatedAt) : "");
+    body.append(dl);
+    if (t.note) body.append(el("div", "note", t.note));
+    row.append(body);
+    list.append(row);
+  });
+}
+
+function renderGraph(byId) {
+  const NW = 188, NH = 54, GX = 64, GY = 18, P = 4;
+  const cols = {}; [...tasks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.id.localeCompare(b.id)).forEach((t) => (cols[t._w] = cols[t._w] || []).push(t));
+  const nCols = Math.max(...Object.keys(cols).map(Number)) + 1;
+  const maxRows = Math.max(...Object.values(cols).map((c) => c.length));
+  const W = P * 2 + nCols * NW + (nCols - 1) * GX, H = P * 2 + maxRows * NH + (maxRows - 1) * GY;
+  const pos = {};
+  Object.entries(cols).forEach(([w, list]) => {
+    const offset = (H - (list.length * NH + (list.length - 1) * GY)) / 2;
+    list.forEach((t, i) => (pos[t.id] = { x: P + w * (NW + GX), y: offset + i * (NH + GY) }));
+  });
+  const NS = "http://www.w3.org/2000/svg";
+  const s = (tag, attrs, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; };
+  const svg = s("svg", { width: W, height: H, viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Task dependency graph" });
+  const line = css("--line"), muted = css("--muted"), fg = css("--fg"), surface = css("--surface");
+  const defs = s("defs", {}); const mk = s("marker", { id: "arr", viewBox: "0 0 8 8", refX: 7, refY: 4, markerWidth: 7, markerHeight: 7, orient: "auto" });
+  mk.append(s("path", { d: "M0,0 L8,4 L0,8 z", fill: muted })); defs.append(mk); svg.append(defs);
+  tasks.forEach((t) => (t.blockedBy || []).forEach((b) => {
+    if (!pos[b]) return;
+    const a = pos[b], c = pos[t.id], x1 = a.x + NW, y1 = a.y + NH / 2, x2 = c.x - 2, y2 = c.y + NH / 2, mx = (x1 + x2) / 2;
+    const live = byId[b].status !== "done";
+    svg.append(s("path", { d: `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`, fill: "none", stroke: live ? muted : line, "stroke-width": 1.5, "stroke-dasharray": live ? "" : "4 3", "marker-end": "url(#arr)" }));
+  }));
+  tasks.forEach((t) => {
+    const p = pos[t.id], col = css(VAR[t._s] || "--wait"), g = s("g", { tabindex: 0, role: "button", "aria-label": "Show details for " + t.id, style: "cursor:pointer" });
+    g.addEventListener("click", () => openTask(t.id));
+    g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openTask(t.id); } });
+    g.append(s("rect", { x: p.x, y: p.y, width: NW, height: NH, rx: 8, fill: surface, stroke: col, "stroke-width": t._s === "in_progress" ? 2 : 1.25 }));
+    g.append(s("rect", { x: p.x, y: p.y + 8, width: 4, height: NH - 16, rx: 2, fill: col }));
+    g.append(s("text", { x: p.x + 14, y: p.y + 21, "font-size": 11.5, fill: col, "font-weight": 600 }, t.id + " · " + (LABEL[t._s] || t._s)));
+    const title = (t.title || "").length > 26 ? t.title.slice(0, 25) + "…" : (t.title || "");
+    const tx = s("text", { x: p.x + 14, y: p.y + 40, "font-size": 13, fill: fg, "font-weight": 500 }, title);
+    tx.append(s("title", {}, t.title || "")); g.append(tx);
+    svg.append(g);
+  });
+  $("graph").replaceChildren(svg);
+}
+
+function renderLog() {
+  const ul = $("log"); ul.replaceChildren();
+  if (!log.length) { ul.append(el("li", "muted", "Nothing has happened yet.")); return; }
+  log.forEach((e) => { const li = el("li"); li.append(el("span", "mono muted", when(e.at)), el("span", null, e.text || "")); ul.append(li); });
+}
+
+(async () => {
+  const fail = (msg) => { $("goal").textContent = msg; };
+  const timer = setTimeout(() => fail("The plan didn't load. Reopen the page to try again."), 10000);
+  const db = window.claude ? await window.claude.use("db") : null;
+  if (!db) { clearTimeout(timer); fail("Sign in to claude.ai to see this plan."); return; }
+  const onErr = () => { clearTimeout(timer); fail("The plan couldn't be read. Reopen the page to try again."); };
+  db.doc("plan/meta").onSnapshot((snap) => { clearTimeout(timer); meta = snap.data() || null; if (!meta) $("goal").textContent = "No plan yet"; render(); }, onErr);
+  db.collection("tasks").onSnapshot((snap) => { clearTimeout(timer); tasks = snap.docs.map((d) => ({ id: d.id, ...d.data() })); render(); }, onErr);
+  db.collection("log").orderBy("at", "desc").limit(30).onSnapshot((snap) => { log = snap.docs.map((d) => d.data()); renderLog(); }, onErr);
+})();
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>

@@ -30,7 +30,8 @@ from a list only when that fails.
 
 The plugin's second skill, `orchestrate`, is for several related tasks at once: one session acts
 as the orchestrator and starts a session per task. See [Orchestrate several
-sessions](#orchestrate-several-sessions).
+sessions](#orchestrate-several-sessions). The third, `artifact-plan`, tracks that work on a live
+plan board. See [Track the plan on a board](#track-the-plan-on-a-board).
 
 ## Install
 
@@ -56,8 +57,8 @@ plugin list. On Team and Enterprise plans, an Owner may have to allow adding mar
 | Way | Reaches cloud sessions? |
 |---|---|
 | `/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge` in a local Claude Code session | No, that machine only |
-| Zip `skills/cloud-local-bridge` (and `skills/orchestrate`) and upload each under claude.ai → Customize → Skills | Yes |
-| Commit `skills/cloud-local-bridge` (and `skills/orchestrate`) to a repository's `.claude/skills/` | Only for that repository |
+| Zip `skills/cloud-local-bridge` (and `skills/orchestrate`, `skills/artifact-plan`) and upload each under claude.ai → Customize → Skills | Yes |
+| Commit `skills/cloud-local-bridge` (and `skills/orchestrate`, `skills/artifact-plan`) to a repository's `.claude/skills/` | Only for that repository |
 | `npx skills add ShiJianXi/cloud-local-bridge`, or copy the folder into `~/.claude/skills/` | No |
 
 Use one way per account. The claude.ai plugin plus a skill upload loads the skill twice.
@@ -129,6 +130,23 @@ started in auto mode, which they can't get if the orchestrator runs in a less pe
 default mode they stall on prompts nobody sees. Local
 children each get their own git worktree. Don't archive the orchestrator until it has finished, or
 the children's reports go nowhere.
+
+## Track the plan on a board
+
+When a request splits into 3 or more tasks and some wait on others, the `artifact-plan` skill
+offers to track it on a plan board instead of a markdown plan file. On your yes, the orchestrator
+publishes a private artifact that shows every task, the order they run in, and which tasks block
+which. Click a task to see its details: what done means, its blockers and dependents, the agent,
+branch and PR, and what the orchestrator checked before marking it done.
+
+The orchestrator is the only one that writes to the board. Child sessions report to it as usual,
+and it turns each report into an update, so the board refreshes live. It starts tasks as their
+blockers finish, runs at most 3 to 5 at once, and checks a child's "done" (PR, CI, the result
+itself) before marking it. After a restart it reads the board and checks each open task's branch
+and PR before carrying on.
+
+The skill needs the Artifact tools, which cloud sessions on claude.ai/code have. Without them it
+says so and carries on without a board.
 
 ## Limits
 

@@ -1,0 +1,23 @@
+{
+  "skill_name": "artifact-plan",
+  "evals": [
+    {
+      "id": 1,
+      "name": "small-request-no-board",
+      "prompt": "Rename the `send_message` helper to `send_report` and update its two callers.",
+      "expected_output": "Does the work directly. Does not offer a plan board: one task, no dependencies."
+    },
+    {
+      "id": 2,
+      "name": "five-task-chain",
+      "prompt": "Orchestrate this: add a settings table to the database, an API for it, a settings page that calls the API, tests for the API, and docs for the page. Run them in cloud sessions.",
+      "expected_output": "Offers a plan board once with the task and dependency counts. On yes: validator passes, board published with 5 tasks (API blocked by table, page and tests blocked by API, docs blocked by page), only unblocked tasks started, at most 3 to 5 running, link given to the user."
+    },
+    {
+      "id": 3,
+      "name": "mid-run-child-failure",
+      "prompt": "(Mid-run) Child for T3 reports: 'Done, PR open.' CI on that PR is red. Later the restarted T3 child fails again.",
+      "expected_output": "Does not mark T3 done: checks the PR and CI, keeps T3 in review with a note. After the second failure marks T3 failed with the reason, does not restart it, and asks the user what to do. Dependents of T3 stay waiting."
+    }
+  ]
+}
