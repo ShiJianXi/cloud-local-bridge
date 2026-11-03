@@ -5,8 +5,9 @@ description: >
   blocks what) instead of a markdown plan file. Use when a request splits into 3 or more tasks with
   dependencies between them, when the orchestrate skill splits work across sessions, or when the
   user says "plan this", "track this", "make a plan board". Offers the board first and builds it
-  only on a yes. Also use when a child session's report names a `Plan task:` id, and when resuming
-  an orchestrator that has a plan board.
+  only on a yes. Also use whenever this session orchestrates work tracked on a plan board: a
+  child's report, approach note or question about a `Plan task:` id, deciding what to write to the
+  board, and resuming after a restart.
 ---
 
 # Artifact plan
@@ -50,6 +51,7 @@ Write the tasks before publishing anything. Each task has:
 | `details`   | scope: the files and areas in scope, and those off limits            |
 | `status`    | `todo`, `in_progress`, `review`, `done` or `failed`                  |
 | `owner`     | the child session's title, once started                              |
+| `approach`  | the approach the orchestrator approved, in a line or two (step 6)    |
 | `evidence`  | what the orchestrator checked before marking done (step 6)           |
 | `branch`, `pr`, `note`, `updatedAt` | filled in as reports come in                 |
 
@@ -89,10 +91,18 @@ Plan task: <id>. <title>
 Objective: <one or two sentences on what and why>
 Done when: <doneWhen>
 In scope: <files and areas from details>. Off limits: <files and areas other tasks own>.
+Built on: <one line per done blocker: id, PR, and its evidence, e.g. "T1: PR #12 merged,
+  settings table in db/schema.sql">. Build on these as they are; ask before changing them.
+Approach first: before writing code, send the orchestrator the files you'll touch and the
+  interfaces you'll create or use, in a few lines, then wait for "go" or "adjust".
 Report to the orchestrator when you start, when a PR is open, when you are blocked (say on
   what), and when Done when is met. Each report: status, PR link, branch, and one or two lines.
   Never edit the plan board.
 ```
+
+Leave out `Built on` for a wave-1 task. `Approach first` is required for a task that unblocks
+others, since a wrong interface there breaks every dependent; for a leaf task, drop the line
+unless the task is large or vague.
 
 Do not start a task whose blockers aren't done, even if a session is idle. If the user wants it
 started anyway, set it going and add a `note` saying it started early.
@@ -104,10 +114,18 @@ Each child report becomes one `ArtifactData` `batch`, pinned with the `if_versio
 | report                     | write to `tasks/<id>`                                        |
 |----------------------------|--------------------------------------------------------------|
 | child started              | `status: in_progress`, `owner`, `branch`                     |
+| approach note              | check it (below), reply, then `approach` = what you approved |
 | PR open                    | `status: review`, `pr`                                       |
 | blocked on a decision      | keep status, `note` = the question                           |
 | Done when met              | verify first (below), then `status: done`, `evidence`        |
 | failed or abandoned        | `status: failed`, `note` = why                               |
+
+**Check the approach.** Compare the note with the task's `details` (in scope, off limits), its
+`doneWhen`, the `Built on` outputs it must use, and what its dependents will need from it. Reply
+"go" when it fits. Otherwise reply "adjust" with the specific change, such as "use the `settings`
+columns from T1, don't add a new table", and wait for a revised note. An approach that changes
+the plan (a new dependency, another task's files) is a plan change: handle it as below, and ask
+the user first if it changes what they asked for.
 
 **Verify before done.** A child saying it's done is a claim. Check it yourself: the PR exists,
 its CI is green, and the `doneWhen` result is observable. Write what you checked to `evidence` in
