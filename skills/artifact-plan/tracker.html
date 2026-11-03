@@ -206,6 +206,7 @@ function render() {
     field("Wave", String(t._w + 1));
     field("Blocked by", (t.blockedBy || []).length ? deps(t.blockedBy) : "Nothing, can start any time");
     field("Unblocks", unblocks[t.id] ? deps(unblocks[t.id]) : "Nothing");
+    field("Approach", t.approach);
     field("Evidence", t.evidence);
     field("Agent", t.owner);
     if (t.branch) field("Branch", el("span", "mono", t.branch));
