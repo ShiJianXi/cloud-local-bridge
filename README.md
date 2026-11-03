@@ -1,164 +1,98 @@
-# cloud-local-bridge
+# Cloud Local Bridge for Claude Code
 
-A Claude Code plugin and skill for handing work from a cloud session (Claude Code on the web,
-claude.ai/code) to a local session on your computer (Claude Desktop or `claude remote-control`) and
-getting the result back, without you naming either session by hand. Use it when a cloud session
-needs your browser, an OAuth sign-in, a desktop app, local files or a local MCP server. It can also
-run several related tasks in parallel sessions from one orchestrator session.
+**Let Claude Code on the web use your computer.**
 
-![Illustration: a cloud session hands a Google sign-in to a local session, which signs in and sends the result back](assets/demo.gif)
+Cloud sessions on claude.ai/code can't open your browser, sign in to sites, or read your files.
+This plugin hands those steps to Claude on your computer and brings the result back.
 
-## The problem it fixes
+[Website](https://shijianxi.github.io/cloud-local-bridge/) ·
+[Install](#install) ·
+[FAQ](#faq)
 
-Cloud sessions can't use your browser, run OAuth sign-ins or reach local files, so you delegate
-that part to a local session. Without help, two things go wrong:
+![A cloud session hands a sign-in to a local session, which does it and sends the result back](assets/demo.gif)
 
-- **The reply gets lost.** A message from a cloud session tells the local session to reply with
-  "the send_message tool of the Claude Code Remote MCP server", using the cloud session's
-  `session_…` id. Local sessions don't have that tool, and the id doesn't resolve: `SendMessage`
-  fails with `No agent named 'session_…' is reachable.` and `mcp__ccd_session_mgmt__send_message`
-  with `session session_… not found. (delivery: undelivered)`. Only `SendMessage` to the cloud
-  session's **title**, as `ListAgents` prints it, gets through.
-- **The local session isn't found.** It has to be open, unarchived and connected to Remote
-  Control. Desktop sessions archive themselves when their PR closes, and terminal sessions only
-  show up when started with `claude remote-control`.
+## What it does
 
-The skill gives both sides a fixed procedure. The sender lists your local sessions and asks which
-one gets the work, or helps you open a new one. It puts a short header on the brief with its own
-title and the topic. The receiver uses that header to find the reply target, and asks you to pick
-from a list only when that fails.
-
-The plugin's second skill, `orchestrate`, is for several related tasks at once: one session acts
-as the orchestrator and starts a session per task. See [Orchestrate several
-sessions](#orchestrate-several-sessions). The third, `artifact-plan`, tracks that work on a live
-plan board. See [Track the plan on a board](#track-the-plan-on-a-board).
+- **Tasks that need your computer.** Browser use, OAuth sign-ins, local files, desktop apps and
+  local MCP servers. The cloud session hands the step to your computer and gets the result back.
+- **Picks the right local session.** It asks which open session should do the work, or starts a
+  new one for you.
+- **Replies find their way back.** No session ids to copy around.
+- **Runs tasks in parallel.** One session per task, and you only talk to one.
+- **Tracks big tasks on a live plan board.** See every task, its order and what blocks it.
 
 ## Install
 
-Both sides need the plugin: the cloud session that hands work down and the local session that does
-it. Add it once to your claude.ai account and it reaches both.
+Add it once to your claude.ai account. Your cloud and local sessions both get it.
 
-1. Open [Customize → Plugins](https://claude.ai/customize/plugins) on claude.ai or in the Claude
-   desktop app.
-2. Find **Cloud Local Bridge** under **Discover**, choose **Add**, and leave it turned on.
-3. Start a new session. Plugins load when a session starts; in a local session that is already
-   open, run `/reload-plugins`.
+1. Open [Customize → Plugins](https://claude.ai/customize/plugins) on claude.ai or in Claude
+   Desktop.
+2. Find **Cloud Local Bridge** under **Discover** and choose **Add**.
+3. Start a new session.
 
-It then loads in your cloud sessions (claude.ai/code) and in local sessions signed in to the same
-account.
+Not in Discover yet, or want the newest version? Choose **Add → Add marketplace** instead and enter
+`ShiJianXi/cloud-local-bridge`.
 
-The Discover listing can be a release behind this repository while Anthropic reviews an update. To
-get the latest release, or if Discover doesn't show the plugin, choose **Add → Add marketplace** in
-step 2 instead, enter `ShiJianXi/cloud-local-bridge`, and add **cloud-local-bridge** from the
-plugin list. On Team and Enterprise plans, an Owner may have to allow adding marketplaces.
+<details>
+<summary>Other ways to install</summary>
 
-### Other ways to install
-
-| Way | Reaches cloud sessions? |
+| Way | Works in cloud sessions? |
 |---|---|
-| `/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge` in a local Claude Code session | No, that machine only |
-| Zip `skills/cloud-local-bridge` (and `skills/orchestrate`, `skills/artifact-plan`) and upload each under claude.ai → Customize → Skills | Yes |
-| Commit `skills/cloud-local-bridge` (and `skills/orchestrate`, `skills/artifact-plan`) to a repository's `.claude/skills/` | Only for that repository |
-| `npx skills add ShiJianXi/cloud-local-bridge`, or copy the folder into `~/.claude/skills/` | No |
+| `/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge` in a local session | No, that computer only |
+| Upload each folder in `skills/` under claude.ai → Customize → Skills | Yes |
+| Copy the `skills/` folders into a repository's `.claude/skills/` | Only for that repository |
+| `npx skills add ShiJianXi/cloud-local-bridge` | No |
 
-Use one way per account. The claude.ai plugin plus a skill upload loads the skill twice.
+Pick one. Installing two ways loads everything twice.
 
-### Optional: start local sessions from claude.ai
+</details>
 
-When the cloud session asks which local session to use, you can also have it open a new one. To
-start that session from claude.ai/code or your phone instead of at your computer, set the computer
-up once in either of these ways:
+## Use it
 
-- **Claude Desktop:** in **Settings → Claude Code**, turn on **Use this computer from your phone
-  and claude.ai** and add your project folders under it. It works while the app is open and the
-  computer is awake. The docs describe this switch for Claude Projects, so it may not appear on
-  every plan.
-- **Terminal:** in the project folder, run
-  `claude remote-control --spawn worktree --chrome` and leave it running. `--spawn worktree` gives
-  each new session its own git worktree, and `--chrome` lets those sessions use your browser.
+Just ask in a cloud session:
 
-Then start a new session on claude.ai/code and pick your computer in its Remote Control menu.
+- "This needs my browser. Hand it to my computer."
+- "Read the file in my Downloads folder."
+- "Orchestrate these three tasks, one session each."
+- "Plan this and track it on a board."
 
-While the terminal command is running, the cloud session can also start the local session by
-itself: it offers **Start one on `<computer>:<folder>` for me** next to **I'll open one myself**,
-and you pick one. The first time, Claude asks you to approve this on a trusted device. That
-approval can't be undone: it limits that cloud session to your trusted devices. Each session it
-starts gets its own git worktree under `.claude/worktrees/`. This avoids most "local session went
-inactive" failures, because a fresh session can be started when it's needed.
+You need a local Claude session on the same account, connected to Remote Control. In Claude
+Desktop, turn on **Connect new sessions to Remote Control**. In a terminal, run
+`claude remote-control`.
 
-Anyone signed in to your claude.ai account can start sessions in those folders, so keep the list
-short.
+### Let the cloud start local sessions for you
 
-## Examples
+Run this in your project folder and leave it open:
 
-1. **Cloud session needs a browser sign-in.** In a cloud session, type: "This needs an OAuth
-   sign-in in my browser, delegate it to a local session." The skill lists your open local sessions
-   and asks which one to use. Other choices: starting a new one on your computer itself, when
-   `claude remote-control --spawn worktree` is running there, or you opening one while it waits. It then sends the brief with a
-   `HANDOFF` header that carries the cloud session's title and the topic.
-2. **Local session sends the result back.** The local session gets a
-   `<cross-session-message from-session="session_…">`, does the task, then finds the cloud session
-   in `ListAgents` by the title in the header and replies with `SendMessage`, so you don't have to
-   name it.
-3. **The cloud session was renamed.** No `ListAgents` row matches the header's title any more. The
-   local session falls back to the one cloud row whose title matches the header's topic. If none
-   or several match, it asks you to pick from the cloud sessions it can see, and does not send to a
-   guess.
+```
+claude remote-control --spawn worktree --chrome
+```
 
-## Orchestrate several sessions
+The cloud session can then start a fresh local session whenever it needs one. Each gets its own
+git worktree and can use your browser.
 
-When you have several related tasks, such as three that touch the same area, ask a session
-to orchestrate them: "orchestrate these three tasks, one session each". That session then:
+## Good to know
 
-1. splits the work into one task per session, and points out tasks that edit the same files;
-2. does the shared work once, such as updating task status or reading the code all the tasks
-   touch, with your approval;
-3. asks whether the sessions should run in the cloud or on your computer, and recommends one;
-4. starts one session per task, each with its own branch and a brief that says what the others
-   are doing;
-5. passes on what each session reports, asks you the questions they can't answer, and sends your
-   answers back;
-6. asks you, as each session finishes its task, whether to archive that session or keep it
-   (for example, to answer review comments on its PR).
+- Read the reply in the cloud session. Delivery back to the cloud isn't confirmed.
+- Run parallel tasks from a cloud session in **auto** mode, or they stall waiting for approvals.
+- Don't use bypass-permissions mode for the local session. It holds messages from the cloud, and
+  Desktop drops them after 5 minutes.
 
-You only talk to the orchestrator. The child sessions report to it and never ask you directly,
-because nobody is watching them. If `send_later` is available, the orchestrator also checks on them on a schedule,
-because a session that finishes cleanly doesn't report back on its own.
+## FAQ
 
-Start the orchestrator in a cloud session (claude.ai/code) in **auto** mode: cloud children are
-started in auto mode, which they can't get if the orchestrator runs in a less permissive one, and in
-default mode they stall on prompts nobody sees. Local
-children each get their own git worktree. Don't archive the orchestrator until it has finished, or
-the children's reports go nowhere.
+**How do I let Claude Code on the web do something that needs my computer?**
+Install this plugin and ask the cloud session to hand that step to your computer. A local Claude
+session does it and sends the result back.
 
-## Track the plan on a board
+**Why does SendMessage say "No agent named 'session_…' is reachable"?**
+Local sessions can't reach a cloud session by its id, only by its title. The plugin uses the title
+for you.
 
-When a request splits into 3 or more tasks and some wait on others, the `artifact-plan` skill
-offers to track it on a plan board instead of a markdown plan file. On your yes, the orchestrator
-publishes a private artifact that shows every task, the order they run in, and which tasks block
-which. Click a task to see its details: what done means, its blockers and dependents, the agent,
-branch and PR, and what the orchestrator checked before marking it done.
+**Does it collect any data?**
+No. It has no servers and makes no network calls. See the [privacy policy](PRIVACY.md).
 
-The orchestrator is the only one that writes to the board. Child sessions report to it as usual,
-and it turns each report into an update, so the board refreshes live. It starts tasks as their
-blockers finish, runs at most 3 to 5 at once, and checks a child's "done" (PR, CI, the result
-itself) before marking it. After a restart it reads the board and checks each open task's branch
-and PR before carrying on.
-
-The skill needs the Artifact tools, which cloud sessions on claude.ai/code have. Without them it
-says so and carries on without a board.
-
-## Limits
-
-- Delivery from a local session to a cloud session is never confirmed. Read the reply in the cloud
-  session's transcript.
-- A local session in bypass-permissions mode holds messages from cloud sessions, and Desktop drops
-  them after 5 minutes.
-- The tools a cloud session uses to list local sessions aren't documented, so the skill tells it to
-  search for them before deciding there is no local session.
-- Anthropic's docs list plugins synced from claude.ai for Cowork and terminal sessions only. In
-  October 2026 they also loaded in claude.ai/code cloud sessions, which is what the recommended
-  install relies on.
+**Is it free?**
+Yes. Free and open source.
 
 ## License
 
