@@ -56,8 +56,9 @@ Just ask in a cloud session:
 - "Orchestrate these three tasks, one session each."
 - "Plan this and track it on a board."
 
-You need a local Claude session on the same account: Claude Desktop, or `claude remote-control` in
-a terminal.
+You need a local Claude session on the same account, connected to Remote Control. In Claude
+Desktop, turn on **Connect new sessions to Remote Control**. In a terminal, run
+`claude remote-control`.
 
 ### Let the cloud start local sessions for you
 
@@ -74,7 +75,8 @@ git worktree and can use your browser.
 
 - Read the reply in the cloud session. Delivery back to the cloud isn't confirmed.
 - Run parallel tasks from a cloud session in **auto** mode, or they stall waiting for approvals.
-- A local session in bypass-permissions mode may hold messages from the cloud for a few minutes.
+- Don't use bypass-permissions mode for the local session. It holds messages from the cloud, and
+  Desktop drops them after 5 minutes.
 
 ## FAQ
 
