@@ -13,5 +13,8 @@ jobs:
           node-version: 22
       - run: npm install -g @anthropic-ai/claude-code
       - run: claude plugin validate .
+      - name: No angle brackets in skill frontmatter (claude.ai strips them from descriptions)
+        run: |
+          awk 'FNR==1{n=0} /^---$/{n++; next} {l=$0; sub(/:[ ]*[>|][-+]?[ ]*$/, "", l)} n==1 && l ~ /[<>]/ {print FILENAME": "$0; bad=1} END{exit bad}' skills/*/SKILL.md
       - run: sh hooks/test_wiki_binding.sh
       - run: python3 skills/artifact-plan/scripts/validate_plan.py --selftest
