@@ -3,8 +3,8 @@ name: orchestrator-wiki
 description: >
   Keeps a small private wiki for one long-running, single-domain orchestrator session, so its
   context can be compacted or cleared and it carries on from the wiki instead of from memory. Use
-  when the user wants a long-running orchestrator or agent for one domain ("you're my Cohort 005
-  agent", "keep a wiki", "a long-running orchestrator for X", "so I can clear your context safely"),
+  when the user wants a long-running orchestrator or agent for one domain ("own <domain> from
+  now on", "keep a wiki", "a long-running orchestrator for X", "so I can clear your context safely"),
   when a line in context starts with `orchestrator-wiki:`, when the user hands over a wiki link to
   resume, and before writing anything to an existing wiki.
 ---
@@ -100,7 +100,7 @@ Most turns write nothing. Write a fact only when all three hold:
 
 | Page        | Holds                                                                     | Update style                  | Cap      |
 |-------------|---------------------------------------------------------------------------|-------------------------------|----------|
-| `charter`   | the domain, in and out of scope, the user's standing rules for it, the skills to use (e.g. `/implement-spec`, `/retro`) | edit in place | 25 lines |
+| `charter`   | the domain, in and out of scope, the user's standing rules for it, the skills to use for it | edit in place | 25 lines |
 | `decisions` | user decisions that still hold: date, decision, why in a line             | append, prune superseded      | 30 lines |
 | `state`     | what is running now: children (title, id, branch, PR), open plan boards, what waits on the user | overwrite whole | 20 lines |
 | `gotchas`   | what cost a retry and will again: a tool quirk, a repository trap, a preference | append, prune stale     | 20 lines |
@@ -143,8 +143,8 @@ rebind, and run step 4. No match or no wiki found: ask the user for the link and
 
 ## 6. Adopt a wiki
 
-A wiki moves to a new session only on the user's word: they hand you its link ("you're my Cohort
-005 orchestrator now, here's the wiki"). Read `wiki/meta` only. If `meta.orchestrator` names
+A wiki moves to a new session only on the user's word: they hand you its link ("take over the <domain>
+orchestrator, here's its wiki"). Read `wiki/meta` only. If `meta.orchestrator` names
 another session, ask once with `AskUserQuestion`: **Take it over (Recommended)**, after which that
 session can no longer use it, or **Leave it**. On take over, update `session`, `process` and
 `orchestrator` in one batch with a log line ("Adopted by <title>."), bind it (step 2.4), then run

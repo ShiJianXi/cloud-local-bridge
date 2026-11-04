@@ -17,7 +17,7 @@ ev() { echo "{\"session_id\":\"\$2\",\"source\":\"\$1\"}" | sh '$s' start > '$tm
 export CLAUDE_ENV_FILE='$tmp/env'
 ev startup s1 startup
 . '$tmp/env'
-sh '$s' bind https://claude.ai/artifact/abc 'Cohort 005' >/dev/null
+sh '$s' bind https://claude.ai/artifact/abc 'Billing' >/dev/null
 ev compact s1 compact
 ev clear s2 clear
 ev compact s2 compact-after-clear
@@ -29,7 +29,7 @@ LIFE
 out=$("$tmp/node" "$tmp/life.sh")
 check() { echo "$out" | grep -q "^$1:$2" || fail "$1: expected $2, got: $(echo "$out" | grep "^$1:")"; }
 check startup -
-check compact 'orchestrator-wiki: you are the long-running Cohort 005 orchestrator.*artifact/abc'
+check compact 'orchestrator-wiki: you are the long-running Billing orchestrator.*artifact/abc'
 check clear orchestrator-wiki
 check compact-after-clear orchestrator-wiki
 check resume-other -

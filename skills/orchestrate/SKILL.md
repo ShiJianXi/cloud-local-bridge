@@ -47,7 +47,7 @@ to the orchestrator, never to the user.
 ## Steps
 
 0. **Long-running domain?** If the user wants this session to own one domain over many runs
-   ("you're my Cohort 005 agent", "keep a wiki", "so I can clear your context"), load the
+   ("own <domain> from now on", "keep a wiki", "so I can clear your context"), load the
    `orchestrator-wiki` skill (Skill tool) and follow it alongside these steps. A line in context
    starting `orchestrator-wiki:` means the same: load it and resume before anything else.
 1. **Split and confirm.** List the tasks: one child each, how many sessions that makes, and what
