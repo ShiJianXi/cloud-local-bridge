@@ -76,10 +76,10 @@ If the Artifact tool or `ArtifactData` isn't available, say so in one line and g
 2. Run `sh <plugin root>/hooks/wiki-binding.sh key` and keep the output.
 3. Seed it with one `ArtifactData` `batch`:
    - `wiki/meta`: `{domain, orchestrator: <this session's title>, session: <session_… id or "">,
-     process: <key>, boards: [], createdAt}`.
-   - `pages/charter`, `pages/decisions`, `pages/state`, `pages/gotchas`: `{title, body, updatedAt}`.
-     `charter` gets the domain in a paragraph, what is in and out of scope, and any standing rules
-     the user gave. The others start with an empty `body`.
+     process: <key>, boards: [], format: 2, createdAt}`.
+   - `pages/charter`, `pages/decisions`, `pages/state`, `pages/gotchas` in the shapes of step 3.
+     `charter` gets the domain, what is in and out of scope, and any standing rules the user
+     gave. The others start with `items: []`.
    - `log/e1`: `{at, text: "Wiki created for <domain>."}`.
 4. Bind it: `sh <plugin root>/hooks/wiki-binding.sh bind <wiki url> "<domain>"`.
 5. Tell the user in one line: the link, that only they and this session can read it, and that
@@ -96,12 +96,32 @@ Most turns write nothing. Write a fact only when all three hold:
 3. **It will still hold.** A decision, a standing rule, a scope line, a lesson. Not a step in
    progress.
 
-| Page        | Holds                                                                     | Update style                  | Cap      |
-|-------------|---------------------------------------------------------------------------|-------------------------------|----------|
-| `charter`   | the domain, in and out of scope, the user's standing rules for it, the skills to use for it | edit in place | 25 lines |
-| `decisions` | user decisions that still hold: date, decision, why in a line             | append, prune superseded      | 30 lines |
-| `state`     | what is running now: children (title, id, branch, PR), open plan boards, what waits on the user | overwrite whole | 20 lines |
-| `gotchas`   | what cost a retry and will again: a tool quirk, a repository trap, a preference | append, prune stale     | 20 lines |
+Each page is short typed items, not free text. The page shows them to the user as cards and
+lists, so the visible fields are for a person and `details` is for you:
+
+| Doc | Shape | Update style | Cap |
+|---|---|---|---|
+| `pages/charter` | `{summary, inScope: [], outOfScope: [], rules: [], skills: [], details, updatedAt}` | edit in place | 6 per list |
+| `pages/decisions` | `{items: [{date: "YYYY-MM-DD", text, why, ref, details}], updatedAt}` | append, drop superseded | 15 items |
+| `pages/state` | `{items: [{title, ref, status, next, needsYou, details}], updatedAt}`; `status` is `running`, `review`, `done` or `paused` | overwrite whole | 8 items |
+| `pages/gotchas` | `{items: [{topic, text, details}], updatedAt}` | append, drop stale | 10 items |
+
+Writing rules, for every field except `details`:
+
+- Plain sentences a person reads at a glance: one idea per item, at most two sentences.
+- No session ids, branch names, tool names (`mcp__…`), UUIDs, file paths, URLs or JSON. They go
+  in `details`, an object of short labels to values (`{"Branch": "…", "Session": "…"}`), which
+  the page folds away under "Technical details". Keep everything you need to act there.
+- A ticket or PR number the user knows (`ABC-12`, `#200`) goes in `ref`, not in the sentence.
+- `next` says what happens next; `needsYou` is set only when the user must act, and says what to
+  do. The page lists every `needsYou` at the top.
+- `log` lines say what changed in plain words ("Added a decision: keep the plugin id.").
+
+A wiki made before this format has no `meta.format`, and its pages hold a free-text `body`. The
+first time you resume or write to one, upgrade it: republish this skill's `wiki.html` to the
+wiki's URL (Artifact `read` it first; leave `capabilities` out so they carry over), then in one
+batch rewrite the four pages into the shapes above, drop `body`, set `meta.format` to `2`, and
+log "Moved the wiki to the readable layout." The new page shows an old `body` as is until then.
 
 Write triggers: the user decides something or states a rule for the domain; a child starts,
 finishes or is archived (overwrite `state`); a plan board is created (add `{title, url}` to
@@ -113,8 +133,8 @@ user hasn't approved, anything about another domain or thread, secrets or creden
 
 Each write is one `ArtifactData` `batch`, pinned with the `if_version` you last read: the page
 change (with `updatedAt`) plus one `log/e<n>` line saying which page and why. At most one wiki
-write per turn. At a page's cap, rewrite it shorter (merge, drop what no longer holds) before
-adding. Keep the whole wiki under about 2,000 tokens.
+write per turn. At a page's cap, merge or drop items that no longer hold before adding. Keep
+the whole wiki under about 2,000 tokens.
 
 ## 4. Resume after `/compact` or `/clear`
 

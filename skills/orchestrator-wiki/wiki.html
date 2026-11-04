@@ -1,78 +1,185 @@
 <title>Orchestrator Wiki</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
-/* Read-only view of one orchestrator's wiki: meta, the four pages, the write log. Only the owner can read the data. */
+/* Read-only view of one orchestrator's wiki, written for a person: needs you, now, decisions,
+   gotchas, charter, recent changes. Ids and tool names sit in "Technical details" folds.
+   Only the owner can read the data. */
 :root {
-  --bg: #f5f6f8; --surface: #ffffff; --fg: #1b2230; --muted: #5c6678; --line: #d9dde5; --accent: #2f5bd3;
-  --font-display: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --bg: #f4f5f7; --surface: #ffffff; --fg: #1a2130; --muted: #5d6676; --line: #dde1e8; --accent: #2f5bd3;
+  --ask: #9a5b00; --ask-bg: #fdf1dc; --ok: #1f7a52; --ok-bg: #e2f3ea; --run: #2f5bd3; --run-bg: #e8eefc; --wait: #636b7a; --wait-bg: #eceef2;
+  --font: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #98a1b2; --line: #2c3442; --accent: #7d9cf0; color-scheme: dark; } }
+  --bg: #12151b; --surface: #1a1f27; --fg: #e7eaf0; --muted: #9aa3b2; --line: #2c333f; --accent: #8aa6f2;
+  --ask: #e8b45c; --ask-bg: #3a2c12; --ok: #63c99a; --ok-bg: #173126; --run: #8aa6f2; --run-bg: #1e2a47; --wait: #a3abba; --wait-bg: #262c37; color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #98a1b2; --line: #2c3442; --accent: #7d9cf0; color-scheme: dark; }
-body { background: var(--bg); color: var(--fg); font-family: var(--font-display); font-size: 15px; line-height: 1.5; margin: 0; }
-.wrap { max-width: 860px; margin: 0 auto; padding: 28px 16px 48px; display: grid; gap: 24px; }
+  --bg: #12151b; --surface: #1a1f27; --fg: #e7eaf0; --muted: #9aa3b2; --line: #2c333f; --accent: #8aa6f2;
+  --ask: #e8b45c; --ask-bg: #3a2c12; --ok: #63c99a; --ok-bg: #173126; --run: #8aa6f2; --run-bg: #1e2a47; --wait: #a3abba; --wait-bg: #262c37; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--font); }
+.wrap { max-width: 860px; margin: 0 auto; padding-block: 28px 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 28px; }
 .wrap > * { min-width: 0; }
-h1 { font-size: 26px; line-height: 1.2; margin: 0; font-weight: 700; text-wrap: balance; }
-h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
-.muted { color: var(--muted); }
-.mono { font-family: var(--font-mono); font-size: 12.5px; overflow-wrap: anywhere; }
-.eyebrow { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--muted); font-size: 13px; margin-top: 8px; }
-.pages { display: grid; gap: 16px; }
-.page { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
-.page h3 { margin: 0 0 8px; font-size: 16px; }
-.page .body { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; font-family: inherit; }
-.page .when { font-size: 12.5px; margin-top: 10px; }
-ul.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-ul.log li { display: grid; grid-template-columns: 9.5em 1fr; gap: 12px; font-size: 14px; }
-@media (max-width: 520px) { ul.log li { grid-template-columns: 1fr; gap: 0; } }
+h1 { font-size: 28px; line-height: 1.15; margin: 0; text-wrap: balance; }
+h2 { font-size: 12.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+h3 { margin: 0 0 6px; font-size: 14px; }
+p { margin: 0; }
 a { color: var(--accent); }
+.muted { color: var(--muted); }
+.head { display: grid; gap: 8px; }
+.lede { font-size: 16.5px; max-width: 62ch; }
+.eyebrow { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted); }
+.ask { background: var(--ask-bg); border-radius: 10px; padding: 14px 16px; display: grid; gap: 8px; }
+.ask h2 { color: var(--ask); margin: 0; }
+ul.plain { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.cards { display: grid; gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; min-width: 0; }
+.card .top { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.card .top strong { font-size: 15.5px; }
+.ref { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.pill { margin-left: auto; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.p-ask { color: var(--ask); background: var(--ask-bg); }
+.p-run { color: var(--run); background: var(--run-bg); }
+.p-ok { color: var(--ok); background: var(--ok-bg); }
+.p-wait { color: var(--wait); background: var(--wait-bg); }
+details { font-size: 13px; }
+summary { cursor: pointer; color: var(--muted); width: fit-content; }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+dl.tech { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0 0; }
+dl.tech dt { color: var(--muted); }
+dl.tech dd { margin: 0; font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; min-width: 0; }
+.list { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.row { display: grid; grid-template-columns: 6.5em 1fr; gap: 4px 16px; padding: 12px 16px; }
+.row + .row { border-top: 1px solid var(--line); }
+.row > div { min-width: 0; display: grid; gap: 2px; }
+.date { color: var(--muted); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.why { color: var(--muted); font-size: 14px; }
+@media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+.scope { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.scope > div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.scope .wide { grid-column: 1 / -1; }
+@media (max-width: 620px) { .scope { grid-template-columns: 1fr; } }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--wait-bg); }
+.old { white-space: pre-wrap; overflow-wrap: anywhere; font-family: inherit; margin: 0; }
+.empty { color: var(--muted); font-size: 14px; }
+ul.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; }
+ul.log li { display: grid; grid-template-columns: 9em 1fr; gap: 12px; }
+@media (max-width: 520px) { ul.log li { grid-template-columns: 1fr; gap: 0; } }
 </style>
 
 <div class="wrap">
-  <header>
+  <header class="head">
     <h1 id="domain">Loading the wiki…</h1>
+    <p class="lede" id="lede"></p>
     <div class="eyebrow" id="meta"></div>
   </header>
-  <section>
-    <h2>Pages</h2>
-    <div class="pages" id="pages"><div class="muted">No pages yet.</div></div>
-  </section>
-  <section>
-    <h2>Writes</h2>
-    <ul class="log" id="log"><li class="muted">Nothing written yet.</li></ul>
-  </section>
+  <section class="ask" id="ask" hidden aria-labelledby="ask-h"><h2 id="ask-h">Needs you</h2><ul class="plain" id="ask-list"></ul></section>
+  <section aria-labelledby="now-h"><h2 id="now-h">Now</h2><div id="now"></div></section>
+  <section aria-labelledby="dec-h"><h2 id="dec-h">Decisions</h2><div id="decisions"></div></section>
+  <section aria-labelledby="got-h"><h2 id="got-h">Gotchas</h2><div id="gotchas"></div></section>
+  <section aria-labelledby="ch-h"><h2 id="ch-h">Charter</h2><div id="charter"></div></section>
+  <section aria-labelledby="log-h"><h2 id="log-h">Recent changes</h2><ul class="log" id="log"></ul></section>
 </div>
 
 <script>
-const ORDER = ["charter", "decisions", "state", "gotchas"];
+const STATUS = { running: ["Running", "p-run"], review: ["In review", "p-run"], done: ["Done", "p-ok"], paused: ["Paused", "p-wait"] };
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-const when = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); };
-let meta = null, pages = [], log = [];
+const fmt = (iso, withTime) => { const d = new Date(iso); if (isNaN(d)) return iso || ""; return d.toLocaleString(undefined, withTime ? { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" } : { month: "short", day: "numeric" }); };
+const arr = (v) => (Array.isArray(v) ? v : []);
+let meta = null, pages = {}, log = [];
 
+function tech(details) {
+  const keys = details && typeof details === "object" ? Object.keys(details) : [];
+  if (!keys.length) return null;
+  const d = el("details"); d.append(el("summary", null, "Technical details"));
+  const dl = el("dl", "tech");
+  keys.forEach((k) => dl.append(el("dt", null, k), el("dd", null, String(details[k]))));
+  d.append(dl); return d;
+}
+function empty(text) { return el("p", "empty", text); }
+// A page written before the structured format: show its text as is until Claude rewrites it.
+function oldBody(p) { return p && p.body && !p.items && !p.summary ? el("pre", "old card", p.body) : null; }
+
+function renderNow() {
+  const box = $("now"), p = pages.state; box.replaceChildren();
+  const old = oldBody(p); if (old) { box.append(old); return; }
+  const items = arr(p && p.items), cards = el("div", "cards");
+  items.forEach((it) => {
+    const c = el("article", "card"), top = el("div", "top");
+    top.append(el("strong", null, it.title || "Untitled"));
+    if (it.ref) top.append(el("span", "ref", it.ref));
+    const [label, cls] = it.needsYou ? ["Waiting on you", "p-ask"] : STATUS[it.status] || [it.status || "", "p-wait"];
+    if (label) top.append(el("span", "pill " + cls, label));
+    c.append(top);
+    if (it.next) c.append(el("p", null, it.next));
+    const t = tech(it.details); if (t) c.append(t);
+    cards.append(c);
+  });
+  box.append(items.length ? cards : empty("Nothing running."));
+  const asks = items.filter((it) => it.needsYou), ul = $("ask-list"); ul.replaceChildren();
+  asks.forEach((it) => ul.append(el("li", null, it.needsYou)));
+  $("ask").hidden = !asks.length;
+  $("ask-h").textContent = `Needs you · ${asks.length}`;
+}
+function renderDecisions() {
+  const box = $("decisions"), p = pages.decisions; box.replaceChildren();
+  const old = oldBody(p); if (old) { box.append(old); return; }
+  const items = arr(p && p.items).slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+  if (!items.length) { box.append(empty("No decisions yet.")); return; }
+  const list = el("div", "list");
+  items.forEach((it) => {
+    const row = el("div", "row"), body = el("div");
+    body.append(el("p", null, it.text || ""));
+    if (it.why) body.append(el("p", "why", it.why));
+    if (it.ref) body.append(el("span", "ref", it.ref));
+    const t = tech(it.details); if (t) body.append(t);
+    row.append(el("span", "date", fmt(it.date)), body); list.append(row);
+  });
+  box.append(list);
+}
+function renderGotchas() {
+  const box = $("gotchas"), p = pages.gotchas; box.replaceChildren();
+  const old = oldBody(p); if (old) { box.append(old); return; }
+  const items = arr(p && p.items);
+  if (!items.length) { box.append(empty("No gotchas yet.")); return; }
+  const cards = el("div", "cards");
+  items.forEach((it) => {
+    const c = el("article", "card"), line = el("p");
+    if (it.topic) line.append(el("b", null, it.topic + ": "));
+    line.append(document.createTextNode(it.text || ""));
+    c.append(line); const t = tech(it.details); if (t) c.append(t); cards.append(c);
+  });
+  box.append(cards);
+}
+function renderCharter() {
+  const box = $("charter"), p = pages.charter; box.replaceChildren();
+  $("lede").textContent = (p && p.summary) || "";
+  const old = oldBody(p); if (old) { box.append(old); return; }
+  if (!p) { box.append(empty("No charter yet.")); return; }
+  const grid = el("div", "scope");
+  const block = (title, list, wide) => { const d = el("div", wide ? "wide" : null); d.append(el("h3", null, title)); const ul = el("ul", "plain"); arr(list).forEach((x) => ul.append(el("li", null, x))); d.append(arr(list).length ? ul : empty("None.")); grid.append(d); return d; };
+  block("In scope", p.inScope); block("Out of scope", p.outOfScope);
+  const rules = block("Rules", p.rules, true); const t = tech(p.details); if (t) rules.append(t);
+  if (arr(p.skills).length) { const d = el("div", "wide"), chips = el("div", "chips"); d.append(el("h3", null, "Skills")); p.skills.forEach((s) => chips.append(el("span", "chip", s))); d.append(chips); grid.append(d); }
+  box.append(grid);
+}
 function render() {
-  $("domain").textContent = meta ? `${meta.domain || "Orchestrator"} wiki` : "No wiki yet";
+  $("domain").textContent = meta ? meta.domain || "Orchestrator wiki" : "No wiki yet";
   const m = $("meta"); m.replaceChildren();
   if (meta) {
-    m.append(el("span", null, `Orchestrator: ${meta.orchestrator || "unknown"}`));
-    if (meta.createdAt) m.append(el("span", null, `Started ${when(meta.createdAt)}`));
-    (meta.boards || []).forEach((b, i) => { const a = el("a", null, b.title || `Plan board ${i + 1}`); a.href = b.url; a.target = "_blank"; a.rel = "noopener"; m.append(a); });
+    m.append(el("span", null, `Kept by “${meta.orchestrator || "unknown"}”`));
+    if (meta.createdAt) m.append(el("span", null, `Started ${fmt(meta.createdAt)}`));
+    const latest = Object.values(pages).map((p) => p.updatedAt).filter(Boolean).sort().pop();
+    if (latest) m.append(el("span", null, `Last updated ${fmt(latest, true)}`));
+    arr(meta.boards).forEach((b, i) => { const a = el("a", null, b.title || `Plan board ${i + 1}`); a.href = b.url; a.target = "_blank"; a.rel = "noopener"; m.append(a); });
   }
-  const box = $("pages"); box.replaceChildren();
-  const sorted = [...pages].sort((a, b) => (ORDER.indexOf(a.id) + 1 || 99) - (ORDER.indexOf(b.id) + 1 || 99));
-  if (!sorted.length) box.append(el("div", "muted", "No pages yet."));
-  sorted.forEach((p) => {
-    const card = el("article", "page");
-    card.append(el("h3", null, p.title || p.id), el("pre", "body", p.body || "Empty."));
-    if (p.updatedAt) card.append(el("div", "when muted", `Updated ${when(p.updatedAt)}`));
-    box.append(card);
-  });
+  renderNow(); renderDecisions(); renderGotchas(); renderCharter();
   const ul = $("log"); ul.replaceChildren();
-  if (!log.length) ul.append(el("li", "muted", "Nothing written yet."));
-  log.forEach((e) => { const li = el("li"); li.append(el("span", "mono muted", when(e.at)), el("span", null, e.text || "")); ul.append(li); });
+  if (!log.length) ul.append(el("li", "empty", "Nothing written yet."));
+  log.forEach((e) => { const li = el("li"); li.append(el("time", "muted", fmt(e.at, true)), el("span", null, e.text || "")); ul.append(li); });
 }
 
 (async () => {
@@ -82,7 +189,7 @@ function render() {
   if (!db) { clearTimeout(timer); fail("Only the wiki's owner can read it. Sign in to claude.ai as the owner."); return; }
   const onErr = () => { clearTimeout(timer); fail("Only the wiki's owner can read it."); };
   db.doc("wiki/meta").onSnapshot((s) => { clearTimeout(timer); meta = s.data() || null; render(); }, onErr);
-  db.collection("pages").onSnapshot((s) => { clearTimeout(timer); pages = s.docs.map((d) => ({ id: d.id, ...d.data() })); render(); }, onErr);
+  db.collection("pages").onSnapshot((s) => { clearTimeout(timer); pages = {}; s.docs.forEach((d) => { pages[d.id] = d.data(); }); render(); }, onErr);
   db.collection("log").orderBy("at", "desc").limit(30).onSnapshot((s) => { log = s.docs.map((d) => d.data()); render(); }, onErr);
 })();
 </script>
