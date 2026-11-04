@@ -57,6 +57,7 @@ Just ask in a cloud session:
 - "Read the file in my Downloads folder."
 - "Orchestrate these three tasks, one session each."
 - "Plan this and track it on a board."
+- "Own billing from now on and keep a wiki."
 
 You need a local Claude session on the same account, connected to Remote Control. In Claude
 Desktop, turn on **Connect new sessions to Remote Control**. In a terminal, run
@@ -79,6 +80,9 @@ git worktree and can use your browser.
 - Run parallel tasks from a cloud session in **auto** mode, or they stall waiting for approvals.
 - Don't use bypass-permissions mode for the local session. It holds messages from the cloud, and
   Desktop drops them after 5 minutes.
+- An orchestrator with a wiki writes to it only when a fact would otherwise be lost. Only that
+  session reads it. After `/compact` or `/clear` it picks the wiki back up by itself; after a
+  restart, say "resume my <domain> orchestrator".
 
 ## FAQ
 
@@ -89,6 +93,11 @@ session does it and sends the result back.
 **Why does SendMessage say "No agent named 'session_…' is reachable"?**
 Local sessions can't reach a cloud session by its id, only by its title. The plugin uses the title
 for you.
+
+**Can I clear or compact a long-running orchestrator?**
+Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's
+running as they happen, so `/compact` and `/clear` lose nothing. Each wiki is private to the one
+session that owns it.
 
 **Does it collect any data?**
 No. It has no servers and makes no network calls. See the [privacy policy](PRIVACY.md).
