@@ -123,8 +123,10 @@ adding. Keep the whole wiki under about 2,000 tokens.
 A line starting `orchestrator-wiki:` in context means this session was compacted or cleared.
 Before replying to anything:
 
-1. `ArtifactData` `get` `wiki/meta` and check rule 1. If `process` differs but `session` matches
-   (a resumed cloud session), update `process` to the new `key` and rebind (step 2.4).
+1. `ArtifactData` `get` `wiki/meta` and check rule 1. When one of `session` and `process` matches
+   and the other is stale (a new process after a cloud resume, a new session id), update the stale
+   one to yours in one batch with a log line, and rebind if `process` changed (step 2.4). Ownership
+   is proven by the match; a wiki left with two stale ids can only be adopted (step 6).
 2. Read the four pages in one `list` of `pages`.
 3. Check `state` against reality: each child's `get_session` or `ListAgents` row, each PR, each
    plan board. Where they differ, overwrite `state` in one batch with a log line.

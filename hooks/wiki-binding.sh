@@ -7,9 +7,11 @@
 #   wiki-binding.sh key | show | unbind        run by the skill through Bash
 # The key is the host process (the first ancestor that isn't a shell, whatever its name: claude,
 # node, the Desktop app) plus its start time. /compact and /clear keep that process, so the binding
-# follows them; another session is another process and gets nothing. Where ps can't walk the tree
-# (Git Bash on Windows), the key falls back to the session id: compaction still works, /clear then
-# needs a manual resume. A restarted host loses the binding on purpose.
+# follows them. The binding also stores its conversation's session id, so another conversation
+# opened in the same process with /resume gets nothing; another session is another process.
+# Where ps can't walk the tree (Git Bash on Windows), the key falls back to the session id:
+# compaction still works, /clear then needs a manual resume. A restarted host loses the binding
+# on purpose.
 dir="${CLAUDE_WIKI_BINDINGS:-$HOME/.claude/orchestrator-wiki/bindings}"
 
 host() {
@@ -29,12 +31,22 @@ field() { sed -n "s/.*\"$1\" *: *\"\([^\"]*\)\".*/\1/p"; }
 case "$1" in
   start)
     input=$(cat)
-    k=$(host) || k="s-$(printf '%s' "$input" | field session_id)"
+    sid=$(printf '%s' "$input" | field session_id)
+    k=$(host) || k="s-$sid"
     [ "$k" = "s-" ] && exit 0
     [ -n "$CLAUDE_ENV_FILE" ] && echo "export CLAUDE_WIKI_KEY='$k'" >> "$CLAUDE_ENV_FILE"
-    case "$(printf '%s' "$input" | field source)" in compact|clear) ;; *) exit 0 ;; esac
-    [ -f "$dir/$k" ] || exit 0
-    IFS="$(printf '\t')" read -r url domain < "$dir/$k"
+    f="$dir/$k" prev=$(cat "$dir/$k.current" 2>/dev/null)
+    mkdir -p "$dir" && printf '%s\n' "$sid" > "$dir/$k.current"
+    [ -f "$f" ] || exit 0
+    IFS="$(printf '\t')" read -r url domain owner < "$f"
+    # The binding follows its own conversation only: through compaction (same id), through /clear
+    # (new id, but the conversation cleared was the bound one), and back to it with /resume.
+    # A different conversation in the same process (/resume to another one) gets nothing.
+    case "$(printf '%s' "$input" | field source)" in
+      compact|resume) [ "$sid" = "$owner" ] || exit 0 ;;
+      clear) [ "$prev" = "$owner" ] || exit 0; printf '%s\t%s\t%s\n' "$url" "$domain" "$sid" > "$f" ;;
+      *) exit 0 ;;
+    esac
     echo "orchestrator-wiki: you are the long-running $domain orchestrator. Before anything else, load the orchestrator-wiki skill and follow its Resume steps with your wiki at $url. Your earlier context was compacted or cleared; the wiki, not your memory, is the source of truth."
     exit 0 ;;
 esac
@@ -45,7 +57,9 @@ f="$dir/$k"
 case "$1" in
   bind)
     [ -n "$2" ] && [ -n "$3" ] || { echo "usage: $0 bind <wiki url> <domain>" >&2; exit 2; }
-    mkdir -p "$dir" && printf '%s\t%s\n' "$2" "$3" > "$f" && echo "bound $3 wiki to this session" ;;
+    sid=$(cat "$f.current" 2>/dev/null)
+    [ -n "$sid" ] || { echo "No session id: this plugin's SessionStart hook didn't run here. Bind skipped; resume by hand after /compact or /clear." >&2; exit 1; }
+    printf '%s\t%s\t%s\n' "$2" "$3" "$sid" > "$f" && echo "bound $3 wiki to this conversation" ;;
   key) echo "$k" ;;
   show) [ -f "$f" ] && cat "$f" ;;
   unbind) rm -f "$f" ;;
