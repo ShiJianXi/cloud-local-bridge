@@ -163,10 +163,3 @@ done after checks."). Then carry on from step 5.
 
 When every task is `done`, add a final log entry, tell the user in one line with the link, and
 leave the board as the record. It's private until the user shares it from the page's Share menu.
-
-## Evals
-
-The plugin's `evals/artifact-plan/` holds three cases for `claude plugin eval`: a small request
-that must not trigger the offer, a 5-task chain that must load this skill and offer a board, and
-a child that reports done while CI is red. Run `claude plugin eval . --tag artifact-plan` from the
-plugin root after changing this file.

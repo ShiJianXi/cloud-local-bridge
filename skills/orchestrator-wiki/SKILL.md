@@ -156,11 +156,3 @@ user's word: don't read it.
 When the user says the domain is done, add a final log line, run `wiki-binding.sh unbind`, and
 leave the wiki as the record. It stays private unless the user shares it, and even then its data
 stays owner-only.
-
-## Evals
-
-The plugin's `evals/orchestrator-wiki/` holds four cases for `claude plugin eval`: a short
-orchestrate run that must not offer a wiki, a resume after compaction that must read the wiki
-first, a progress report that must not be written, and a wiki owned by another session that must
-not be read. Run `claude plugin eval . --tag orchestrator-wiki` from the plugin root after changing
-this file. `sh hooks/test_wiki_binding.sh` checks the binding script.
