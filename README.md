@@ -26,6 +26,8 @@ orchestrators' memory in a private wiki.
 - **Tracks big tasks on a live plan board.** See every task, its order and what blocks it.
 - **Long-running orchestrators keep a private wiki.** One per domain, read only by that session,
   so you can `/compact` or `/clear` it and it picks up where it left off.
+- **The wiki stays small and gets better.** Old items move to an archive instead of piling up,
+  and the orchestrator reviews its own friction to tidy up and learn its own rules.
 
 ## Install
 
@@ -90,6 +92,14 @@ git worktree and can use your browser.
 - The wiki page shows what needs you first, then a card for each piece of work, then the
   decisions and gotchas. Ids and tool names are kept in a "Technical details" fold. A wiki made
   before 2.1.0 switches to this layout the next time it's resumed or written to.
+- The wiki stays the same size over weeks or months. Superseded decisions, stale gotchas, finished
+  work and old log lines move to monthly archive docs inside the same private wiki, which are read
+  only when a question needs history. Nothing is deleted.
+- About once a week, or when you say "review the wiki", the orchestrator reviews itself. It works
+  from friction it noted at the time (your corrections, failed children, retries, questions left
+  waiting). It tidies and adds or retires its own **learned rules**, shown apart from your rules,
+  on its own. It asks you before changing your rules or the scope. The review never runs in
+  another session, a subagent or on a schedule, and never reads other sessions.
 
 ## Renamed from Cloud Local Bridge
 
@@ -112,6 +122,11 @@ Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisi
 running as they happen, so `/compact` and `/clear` lose nothing. Each wiki is private to the one
 session that owns it.
 
+**Won't a wiki kept for months get huge?**
+No. The pages read on every resume stay capped. What falls off them goes to a monthly archive in
+the same private wiki, and a regular review tidies up, merges duplicates and learns rules from
+recurring trouble. Say "forget that rule" to drop a learned rule.
+
 **Does it collect any data?**
 No. It has no servers and makes no network calls. See the [privacy policy](PRIVACY.md).
 
@@ -123,11 +138,13 @@ Yes. Free and open source.
 Run these from the plugin root after changing a skill:
 
 - `claude plugin eval . --tag artifact-plan`: three cases in `evals/artifact-plan/`.
-- `claude plugin eval . --tag orchestrator-wiki`: four cases in `evals/orchestrator-wiki/`.
+- `claude plugin eval . --tag orchestrator-wiki`: eight cases in `evals/orchestrator-wiki/`.
 - `sh hooks/test_wiki_binding.sh`: checks the wiki binding script.
+- `node skills/orchestrator-wiki/test_wiki_page.mjs`: checks the wiki page shows learned rules, the
+  last review and the archive.
 - `python3 skills/artifact-plan/scripts/validate_plan.py --selftest`: checks the plan validator.
 
-CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last two checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
+CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last three checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
 
 When a review finding is accepted, fix it with a check that fails before the fix and passes after it. Add that check to one of the scripts above, so CI keeps the bug from coming back.
 
