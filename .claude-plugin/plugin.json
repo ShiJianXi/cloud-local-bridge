@@ -1,8 +1,8 @@
 {
   "name": "cloud-local-bridge",
   "displayName": "Cloud Local Bridge",
-  "version": "1.5.0",
-  "description": "Let Claude Code on the web use your computer: hand browser, OAuth sign-in, desktop-app and local-file steps from a claude.ai/code session to a local Claude Desktop or Remote Control session, and get the result back. Also runs several related tasks in parallel sessions from one orchestrator, tracked on a live plan board.",
+  "version": "1.6.0",
+  "description": "Let Claude Code on the web use your computer: hand browser, OAuth sign-in, desktop-app and local-file steps from a claude.ai/code session to a local Claude Desktop or Remote Control session, and get the result back. Also runs several related tasks in parallel sessions from one orchestrator, tracked on a live plan board, and keeps a private per-session wiki for long-running orchestrators.",
   "author": {
     "name": "ShiJianXi"
   },
@@ -28,7 +28,8 @@
     "multi-session",
     "orchestrate",
     "planning",
-    "artifacts"
+    "artifacts",
+    "wiki"
   ],
   "privacyPolicyUrl": "https://github.com/ShiJianXi/cloud-local-bridge/blob/main/PRIVACY.md",
   "documentationUrl": "https://github.com/ShiJianXi/cloud-local-bridge#readme",

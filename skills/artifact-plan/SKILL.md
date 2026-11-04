@@ -78,7 +78,9 @@ orchestrate step 1 does.
    - `tasks/<id>` for every task, all `todo`.
    - `log/e1`: `{at: <ISO time>, text: "Plan created with N tasks."}`.
 3. Give the user the link, and put it in your table of running sessions so a resumed orchestrator
-   can find it.
+   can find it. If this session keeps an orchestrator wiki, add the board's `{title, url}` to its
+   `wiki/meta` `boards` (`orchestrator-wiki` step 3). The board stays its own artifact; the wiki
+   only links it.
 
 ## 5. Dispatch from the board
 
@@ -150,6 +152,8 @@ user's word.
 ## 7. Resume
 
 After a restart or a context compaction, the board is the source of truth, not your memory.
+If this session keeps an orchestrator wiki, resume it first (`orchestrator-wiki` step 4); its
+`state` page lists the open boards.
 Read `plan/meta`, every `tasks` doc and the last 20 `log` entries. For each task that isn't
 `done`, check its real state: its child session, branch and PR. Where the board and reality
 differ, fix the board in one batch with a log entry ("Resumed: T4 PR merged while away, marked
