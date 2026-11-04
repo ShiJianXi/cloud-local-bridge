@@ -1,0 +1,88 @@
+<title>Orchestrator Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Read-only view of one orchestrator's wiki: meta, the four pages, the write log. Only the owner can read the data. */
+:root {
+  --bg: #f5f6f8; --surface: #ffffff; --fg: #1b2230; --muted: #5c6678; --line: #d9dde5; --accent: #2f5bd3;
+  --font-display: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #98a1b2; --line: #2c3442; --accent: #7d9cf0; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #12161d; --surface: #1a2029; --fg: #e6e9ef; --muted: #98a1b2; --line: #2c3442; --accent: #7d9cf0; color-scheme: dark; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-display); font-size: 15px; line-height: 1.5; margin: 0; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 28px 16px 48px; display: grid; gap: 24px; }
+.wrap > * { min-width: 0; }
+h1 { font-size: 26px; line-height: 1.2; margin: 0; font-weight: 700; text-wrap: balance; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-mono); font-size: 12.5px; overflow-wrap: anywhere; }
+.eyebrow { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--muted); font-size: 13px; margin-top: 8px; }
+.pages { display: grid; gap: 16px; }
+.page { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.page h3 { margin: 0 0 8px; font-size: 16px; }
+.page .body { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; font-family: inherit; }
+.page .when { font-size: 12.5px; margin-top: 10px; }
+ul.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+ul.log li { display: grid; grid-template-columns: 9.5em 1fr; gap: 12px; font-size: 14px; }
+@media (max-width: 520px) { ul.log li { grid-template-columns: 1fr; gap: 0; } }
+a { color: var(--accent); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1 id="domain">Loading the wiki…</h1>
+    <div class="eyebrow" id="meta"></div>
+  </header>
+  <section>
+    <h2>Pages</h2>
+    <div class="pages" id="pages"><div class="muted">No pages yet.</div></div>
+  </section>
+  <section>
+    <h2>Writes</h2>
+    <ul class="log" id="log"><li class="muted">Nothing written yet.</li></ul>
+  </section>
+</div>
+
+<script>
+const ORDER = ["charter", "decisions", "state", "gotchas"];
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const when = (iso) => { const d = new Date(iso); return isNaN(d) ? "" : d.toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); };
+let meta = null, pages = [], log = [];
+
+function render() {
+  $("domain").textContent = meta ? `${meta.domain || "Orchestrator"} wiki` : "No wiki yet";
+  const m = $("meta"); m.replaceChildren();
+  if (meta) {
+    m.append(el("span", null, `Orchestrator: ${meta.orchestrator || "unknown"}`));
+    if (meta.createdAt) m.append(el("span", null, `Started ${when(meta.createdAt)}`));
+    (meta.boards || []).forEach((b, i) => { const a = el("a", null, b.title || `Plan board ${i + 1}`); a.href = b.url; a.target = "_blank"; a.rel = "noopener"; m.append(a); });
+  }
+  const box = $("pages"); box.replaceChildren();
+  const sorted = [...pages].sort((a, b) => (ORDER.indexOf(a.id) + 1 || 99) - (ORDER.indexOf(b.id) + 1 || 99));
+  if (!sorted.length) box.append(el("div", "muted", "No pages yet."));
+  sorted.forEach((p) => {
+    const card = el("article", "page");
+    card.append(el("h3", null, p.title || p.id), el("pre", "body", p.body || "Empty."));
+    if (p.updatedAt) card.append(el("div", "when muted", `Updated ${when(p.updatedAt)}`));
+    box.append(card);
+  });
+  const ul = $("log"); ul.replaceChildren();
+  if (!log.length) ul.append(el("li", "muted", "Nothing written yet."));
+  log.forEach((e) => { const li = el("li"); li.append(el("span", "mono muted", when(e.at)), el("span", null, e.text || "")); ul.append(li); });
+}
+
+(async () => {
+  const fail = (msg) => { $("domain").textContent = msg; };
+  const timer = setTimeout(() => fail("The wiki didn't load. Reopen the page to try again."), 10000);
+  const db = window.claude ? await window.claude.use("db") : null;
+  if (!db) { clearTimeout(timer); fail("Only the wiki's owner can read it. Sign in to claude.ai as the owner."); return; }
+  const onErr = () => { clearTimeout(timer); fail("Only the wiki's owner can read it."); };
+  db.doc("wiki/meta").onSnapshot((s) => { clearTimeout(timer); meta = s.data() || null; render(); }, onErr);
+  db.collection("pages").onSnapshot((s) => { clearTimeout(timer); pages = s.docs.map((d) => ({ id: d.id, ...d.data() })); render(); }, onErr);
+  db.collection("log").orderBy("at", "desc").limit(30).onSnapshot((s) => { log = s.docs.map((d) => d.data()); render(); }, onErr);
+})();
+</script>

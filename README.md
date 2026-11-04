@@ -20,6 +20,8 @@ This plugin hands those steps to Claude on your computer and brings the result b
 - **Replies find their way back.** No session ids to copy around.
 - **Runs tasks in parallel.** One session per task, and you only talk to one.
 - **Tracks big tasks on a live plan board.** See every task, its order and what blocks it.
+- **Long-running orchestrators keep a private wiki.** One per domain, read only by that session,
+  so you can `/compact` or `/clear` it and it picks up where it left off.
 
 ## Install
 
