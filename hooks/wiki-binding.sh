@@ -1,8 +1,8 @@
 #!/bin/sh
 # Binds an orchestrator wiki to one running Claude Code session host (orchestrator-wiki skill).
-#   wiki-binding.sh start                      SessionStart hook, every source: shares the key
-#                                              with Bash through CLAUDE_ENV_FILE and, after
-#                                              compact or clear, points Claude at its wiki
+#   wiki-binding.sh start                      SessionStart hook, every source: records the
+#                                              session and, after compact or clear, points
+#                                              Claude at its wiki
 #   wiki-binding.sh bind <wiki url> <domain>   run by the skill through Bash
 #   wiki-binding.sh key | show | unbind        run by the skill through Bash
 # The key is the host process (the first ancestor that isn't a shell, whatever its name: claude,
@@ -10,12 +10,11 @@
 # follows them. The binding also stores its conversation's session id, so another conversation
 # opened in the same process with /resume gets nothing; another session is another process.
 # Where ps can't walk the tree (Git Bash on Windows), the key falls back to the session id:
-# compaction still works, /clear then needs a manual resume. A restarted host loses the binding
+# compaction still works, but bind can't run, so resume by hand. A restarted host loses the binding
 # on purpose.
-# Bindings live in the plugin's own data folder (CLAUDE_PLUGIN_DATA, set for hooks); the hook
-# hands that path to Bash with the key. Without it they go to the temp folder, which is enough:
-# a binding only lives as long as its host process anyway.
-dir="${CLAUDE_WIKI_BINDINGS:-${CLAUDE_PLUGIN_DATA:-${TMPDIR:-/tmp}/molt}/orchestrator-wiki-bindings}"
+# Bindings go to the temp folder: a binding only lives as long as its host process anyway. Both
+# the hook and the skill's Bash calls find the same host process, so nothing is passed between them.
+dir="${CLAUDE_WIKI_BINDINGS:-${TMPDIR:-/tmp}/molt-wiki-bindings}"
 
 host() {
   p=$$ i=0
@@ -37,7 +36,6 @@ case "$1" in
     sid=$(printf '%s' "$input" | field session_id)
     k=$(host) || k="s-$sid"
     [ "$k" = "s-" ] && exit 0
-    [ -n "$CLAUDE_ENV_FILE" ] && printf "export CLAUDE_WIKI_KEY='%s' CLAUDE_WIKI_BINDINGS='%s'\n" "$k" "$dir" >> "$CLAUDE_ENV_FILE"
     f="$dir/$k" prev=$(cat "$dir/$k.current" 2>/dev/null)
     mkdir -p "$dir" && printf '%s\n' "$sid" > "$dir/$k.current"
     [ -f "$f" ] || exit 0

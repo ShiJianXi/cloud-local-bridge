@@ -4,7 +4,7 @@ set -eu
 here=$(cd "$(dirname "$0")" && pwd)
 tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT
 export CLAUDE_WIKI_BINDINGS="$tmp/b"
-unset CLAUDE_WIKI_KEY CLAUDE_ENV_FILE 2>/dev/null || true
+unset CLAUDE_WIKI_KEY 2>/dev/null || true
 cp "$(command -v sh)" "$tmp/node" # a stand-in host process that isn't named claude
 s="$here/wiki-binding.sh"
 fail() { echo "FAIL: $1"; exit 1; }
@@ -14,9 +14,7 @@ fail() { echo "FAIL: $1"; exit 1; }
 # substitution inside: a forked subshell would look like another host process.
 cat > "$tmp/life.sh" <<LIFE
 ev() { echo "{\"session_id\":\"\$2\",\"source\":\"\$1\"}" | sh '$s' start > '$tmp/o'; printf '%s:' "\$3"; if [ -s '$tmp/o' ]; then cat '$tmp/o'; else echo -; fi; }
-export CLAUDE_ENV_FILE='$tmp/env'
 ev startup s1 startup
-. '$tmp/env'
 sh '$s' bind https://claude.ai/artifact/abc 'Billing' >/dev/null
 ev compact s1 compact
 ev clear s2 clear
