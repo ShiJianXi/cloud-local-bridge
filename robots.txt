@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://shijianxi.github.io/cloud-local-bridge/sitemap.xml
+Sitemap: https://shijianxi.github.io/molt/sitemap.xml
