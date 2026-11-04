@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cloud Local Bridge – Let Claude Code on the web use your computer</title>
-<meta name="description" content="Free Claude Code plugin. Hand browser, OAuth sign-in, desktop-app and local-file steps from claude.ai/code to Claude on your computer, and get the result back.">
-<link rel="canonical" href="https://shijianxi.github.io/cloud-local-bridge/">
+<title>Molt – A Claude Code workflow kit that changes as best practices do</title>
+<meta name="description" content="Free Claude Code plugin, formerly Cloud Local Bridge. Hand browser, OAuth sign-in, desktop-app and local-file steps from claude.ai/code to Claude on your computer, and get the result back.">
+<link rel="canonical" href="https://shijianxi.github.io/molt/">
 <link rel="icon" type="image/png" href="assets/icon.png">
 <meta name="theme-color" content="#0c0c0c">
 
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Cloud Local Bridge">
-<meta property="og:title" content="Cloud Local Bridge – Let Claude Code on the web use your computer">
+<meta property="og:site_name" content="Molt">
+<meta property="og:title" content="Molt – A Claude Code workflow kit that changes as best practices do">
 <meta property="og:description" content="Browser, OAuth sign-in and local files, handed to your machine. Result sent back. Free Claude Code plugin.">
-<meta property="og:url" content="https://shijianxi.github.io/cloud-local-bridge/">
-<meta property="og:image" content="https://shijianxi.github.io/cloud-local-bridge/assets/social-preview.png">
+<meta property="og:url" content="https://shijianxi.github.io/molt/">
+<meta property="og:image" content="https://shijianxi.github.io/molt/assets/social-preview.png">
 <meta property="og:image:width" content="1280">
 <meta property="og:image:height" content="640">
 <meta name="twitter:card" content="summary_large_image">
@@ -25,32 +25,32 @@
   "@graph": [
     {
       "@type": "SoftwareApplication",
-      "name": "Cloud Local Bridge",
-      "alternateName": "cloud-local-bridge",
+      "name": "Molt",
+      "alternateName": ["Cloud Local Bridge", "cloud-local-bridge"],
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Claude Code (web, desktop, terminal)",
       "description": "Claude Code plugin that hands browser, OAuth sign-in, desktop-app and local-file steps from a Claude Code on the web (claude.ai/code) session to a local Claude Desktop or Remote Control session, and returns the result. Also runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki for long-running orchestrators so their context can be compacted or cleared safely.",
-      "url": "https://shijianxi.github.io/cloud-local-bridge/",
-      "downloadUrl": "https://github.com/ShiJianXi/cloud-local-bridge",
+      "url": "https://shijianxi.github.io/molt/",
+      "downloadUrl": "https://github.com/ShiJianXi/molt",
       "softwareVersion": "1.6.0",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
       "author": { "@type": "Person", "name": "ShiJianXi", "url": "https://github.com/ShiJianXi" },
-      "sameAs": ["https://github.com/ShiJianXi/cloud-local-bridge"]
+      "sameAs": ["https://github.com/ShiJianXi/molt"]
     },
     {
       "@type": "FAQPage",
       "mainEntity": [
         { "@type": "Question", "name": "How do I let Claude Code on the web do something that needs my computer?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Install Cloud Local Bridge and ask the cloud session to hand that step to your computer. A local Claude session does it and sends the result back. Browser use, OAuth sign-ins, local files, desktop apps and local MCP servers all work this way." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Install Molt and ask the cloud session to hand that step to your computer. A local Claude session does it and sends the result back. Browser use, OAuth sign-ins, local files, desktop apps and local MCP servers all work this way." } },
         { "@type": "Question", "name": "Why does SendMessage say \"No agent named 'session_…' is reachable\"?",
-          "acceptedAnswer": { "@type": "Answer", "text": "A local session can't reach a cloud session by its session_ id. Only the cloud session's title, as ListAgents prints it, works. Cloud Local Bridge makes both sides use the title automatically." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "A local session can't reach a cloud session by its session_ id. Only the cloud session's title, as ListAgents prints it, works. Molt makes both sides use the title automatically." } },
         { "@type": "Question", "name": "Which local sessions work?",
           "acceptedAnswer": { "@type": "Answer", "text": "Claude Desktop, or a terminal session started with claude remote-control. It must be open and signed in to the same claude.ai account." } },
         { "@type": "Question", "name": "Can the cloud session start a local session for me?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes, while claude remote-control --spawn worktree is running on your computer. Each new session gets its own git worktree." } },
-        { "@type": "Question", "name": "Does Cloud Local Bridge collect any data?",
+        { "@type": "Question", "name": "Does Molt collect any data?",
           "acceptedAnswer": { "@type": "Answer", "text": "No. It has no servers and no network calls. It is a set of instructions for Claude plus one small script that keeps an orchestrator's wiki link on your own machine. Messages go between your own sessions through Claude Code's built-in tools." } },
         { "@type": "Question", "name": "Can I clear or compact a long-running orchestrator?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's running as they happen, so /compact and /clear lose nothing, and it picks the wiki back up by itself. Each wiki is private to the one session that owns it." } },
@@ -173,12 +173,12 @@
   <div class="wrap">
     <a class="brand" href="#top">
       <svg width="34" height="20" viewBox="0 0 34 20" fill="none" aria-hidden="true"><circle cx="8" cy="10" r="7" fill="#ffb000"/><rect x="14" y="8.5" width="6" height="3" fill="#ffb000"/><rect x="21" y="2.5" width="11" height="15" rx="2" stroke="#ffb000" stroke-width="3"/><circle cx="26.5" cy="10" r="1.6" fill="#ffb000"/></svg>
-      Cloud Local Bridge
+      Molt
     </a>
     <nav>
       <a class="opt" href="#features">Features</a>
       <a class="opt" href="#install">Install</a>
-      <a href="https://github.com/ShiJianXi/cloud-local-bridge">GitHub</a>
+      <a href="https://github.com/ShiJianXi/molt">GitHub</a>
     </nav>
   </div>
 </header>
@@ -186,8 +186,8 @@
 <main id="top">
   <section style="border-top: 1px solid var(--line)">
     <div class="wrap pad">
-      <h1>Let Claude Code on the web use your computer.</h1>
-      <p class="lead">Cloud sessions can't open your browser, sign in, or read your files. This plugin hands those steps to Claude on your machine and brings the result back.</p>
+      <h1>A Claude Code workflow kit that sheds its shell as best practices change.</h1>
+      <p class="lead">Molt bundles the skills I use to work with Claude Code, and changes as that way of working does. Today it lets cloud sessions use your computer, runs tasks in parallel on a live plan board, and keeps a private wiki for long-running orchestrators. Formerly Cloud Local Bridge: if you installed it under that name, remove it and add Molt.</p>
       <div class="btns">
         <a class="btn primary" href="#install">Install free</a>
         <a class="btn ghost" href="#features">See what it does</a>
@@ -221,13 +221,13 @@
         <p class="sub" style="margin-bottom:28px">Add it to your claude.ai account. Cloud and local sessions both get it.</p>
         <ol>
           <li>Open <a href="https://claude.ai/customize/plugins">Customize → Plugins</a>.</li>
-          <li>Find <strong>Cloud Local Bridge</strong> under Discover. Choose Add.</li>
+          <li>Find <strong>Molt</strong> under Discover. Choose Add.</li>
           <li>Start a new session.</li>
         </ol>
       </div>
       <div>
-        <div class="cmd-label"><span>Or in a local Claude Code session</span><button type="button" class="copy" data-copy="/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge">Copy</button></div>
-        <pre>/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge</pre>
+        <div class="cmd-label"><span>Or in a local Claude Code session</span><button type="button" class="copy" data-copy="/plugin install molt --marketplace ShiJianXi/molt">Copy</button></div>
+        <pre>/plugin install molt --marketplace ShiJianXi/molt</pre>
         <p class="muted" style="font-size:14px;margin:12px 0 0">Free and open source. MIT license. No data collected.</p>
       </div>
     </div>
@@ -270,12 +270,12 @@
 
 <footer>
   <div class="wrap">
-    <span>Cloud Local Bridge · MIT</span>
+    <span>Molt · MIT</span>
     <nav>
-      <a href="https://github.com/ShiJianXi/cloud-local-bridge">GitHub</a>
-      <a href="https://github.com/ShiJianXi/cloud-local-bridge#readme">Docs</a>
-      <a href="https://github.com/ShiJianXi/cloud-local-bridge/blob/main/PRIVACY.md">Privacy</a>
-      <a href="https://github.com/ShiJianXi/cloud-local-bridge/issues">Support</a>
+      <a href="https://github.com/ShiJianXi/molt">GitHub</a>
+      <a href="https://github.com/ShiJianXi/molt#readme">Docs</a>
+      <a href="https://github.com/ShiJianXi/molt/blob/main/PRIVACY.md">Privacy</a>
+      <a href="https://github.com/ShiJianXi/molt/issues">Support</a>
     </nav>
   </div>
 </footer>
