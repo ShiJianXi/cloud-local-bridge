@@ -3,7 +3,7 @@ name: orchestrator-wiki
 description: >
   Keeps a small private wiki for one long-running, single-domain orchestrator session, so its
   context can be compacted or cleared and it carries on from the wiki instead of from memory. Use
-  when the user wants a long-running orchestrator or agent for one domain ("own <domain> from
+  when the user wants a long-running orchestrator or agent for one domain ("own X from
   now on", "keep a wiki", "a long-running orchestrator for X", "so I can clear your context safely"),
   when a line in context starts with `orchestrator-wiki:`, when the user hands over a wiki link to
   resume, and before writing anything to an existing wiki.

@@ -6,7 +6,7 @@ description: >
   sessions. Use when a cloud session needs something only the user's machine can do (browser, OAuth
   sign-in, desktop apps, local files, local MCP servers) — "delegate to a local agent", "hand this to
   my local session", "run this on my computer" — and when a local session receives a
-  `<cross-session-message from-session="session_…">` or is told to "send it back".
+  cross-session-message tag from another session or is told to "send it back".
 ---
 
 # Cloud-local bridge

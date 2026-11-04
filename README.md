@@ -127,7 +127,7 @@ Run these from the plugin root after changing a skill:
 - `sh hooks/test_wiki_binding.sh`: checks the wiki binding script.
 - `python3 skills/artifact-plan/scripts/validate_plan.py --selftest`: checks the plan validator.
 
-CI (`.github/workflows/check.yml`) runs `claude plugin validate .` and the last two checks on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
+CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last two checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
 
 When a review finding is accepted, fix it with a check that fails before the fix and passes after it. Add that check to one of the scripts above, so CI keeps the bug from coming back.
 
