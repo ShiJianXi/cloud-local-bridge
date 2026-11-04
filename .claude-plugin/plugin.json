@@ -1,7 +1,7 @@
 {
   "name": "molt",
   "displayName": "Molt",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A Claude Code workflow kit that changes as best practices do. Today: hand browser, sign-in, desktop-app and local-file steps from a claude.ai/code session to your computer; run related tasks in parallel sessions tracked on a live plan board; and keep a private wiki for long-running orchestrators. Formerly Cloud Local Bridge.",
   "author": {
     "name": "ShiJianXi"

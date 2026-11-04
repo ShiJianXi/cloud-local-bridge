@@ -115,6 +115,14 @@ No. It has no servers and makes no network calls. See the [privacy policy](PRIVA
 **Is it free?**
 Yes. Free and open source.
 
+## Development
+
+Run these from the plugin root after changing a skill:
+
+- `claude plugin eval . --tag artifact-plan`: three cases in `evals/artifact-plan/`.
+- `claude plugin eval . --tag orchestrator-wiki`: four cases in `evals/orchestrator-wiki/`.
+- `sh hooks/test_wiki_binding.sh`: checks the wiki binding script.
+
 ## License
 
 MIT

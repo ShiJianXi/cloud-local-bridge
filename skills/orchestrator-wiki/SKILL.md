@@ -28,16 +28,14 @@ up from this skill's directory) ties the wiki to the running session's host proc
   `clear`, then `SessionStart` with source `clear`). Both stay in the same Claude process.
 - This plugin's `SessionStart` hook runs `wiki-binding.sh start` at every session start. It
   works out the session's host process (the first ancestor that isn't a shell, whatever its name:
-  `claude`, `node`, the Desktop app) and hands that key to Bash as `CLAUDE_WIKI_KEY` through
-  `CLAUDE_ENV_FILE`. After a compaction or `/clear`, if that host has a binding, it injects one line
+  `claude`, `node`, the Desktop app); your Bash calls to the script find the same process. After a compaction or `/clear`, if that host has a binding, it injects one line
   starting `orchestrator-wiki:` with the domain and the link. Any other session is another process
   and gets nothing.
-- Where `ps` can't walk the process tree (Git Bash on Windows), the key falls back to the session
-  id: compaction still re-attaches, `/clear` needs the manual resume below.
+- Where `ps` can't walk the process tree (Git Bash on Windows), binding fails with a message: use
+  the manual resume below after a compaction or `/clear`.
 - The hook ships with the plugin. Installed as bare skills (no plugin), or anywhere plugin hooks
   don't run, nothing is injected: after a compaction or `/clear` the user says "resume my <domain>
-  orchestrator" and step 5 runs. If `CLAUDE_WIKI_KEY` is empty when you create the wiki, the hook
-  didn't run here: tell the user this once.
+  orchestrator" and step 5 runs. If `bind` says the hook didn't run here, tell the user this once.
 - A new process loses the binding on purpose: a resumed cloud session in a fresh container, a
   restarted terminal, a switch from cloud to Desktop. Step 5 covers finding the wiki then.
 
@@ -156,11 +154,3 @@ user's word: don't read it.
 When the user says the domain is done, add a final log line, run `wiki-binding.sh unbind`, and
 leave the wiki as the record. It stays private unless the user shares it, and even then its data
 stays owner-only.
-
-## Evals
-
-The plugin's `evals/orchestrator-wiki/` holds four cases for `claude plugin eval`: a short
-orchestrate run that must not offer a wiki, a resume after compaction that must read the wiki
-first, a progress report that must not be written, and a wiki owned by another session that must
-not be read. Run `claude plugin eval . --tag orchestrator-wiki` from the plugin root after changing
-this file. `sh hooks/test_wiki_binding.sh` checks the binding script.
