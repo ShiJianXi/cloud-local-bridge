@@ -138,7 +138,7 @@ Yes. Free and open source.
 Run these from the plugin root after changing a skill:
 
 - `claude plugin eval . --tag artifact-plan`: three cases in `evals/artifact-plan/`.
-- `claude plugin eval . --tag orchestrator-wiki`: eight cases in `evals/orchestrator-wiki/`.
+- `claude plugin eval . --tag orchestrator-wiki`: nine cases in `evals/orchestrator-wiki/`.
 - `sh hooks/test_wiki_binding.sh`: checks the wiki binding script.
 - `node skills/orchestrator-wiki/test_wiki_page.mjs`: checks the wiki page shows learned rules, the
   last review and the archive.

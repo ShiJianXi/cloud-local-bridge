@@ -85,7 +85,7 @@ If the Artifact tool or `ArtifactData` isn't available, say so in one line and g
 2. Run `sh <plugin root>/hooks/wiki-binding.sh key` and keep the output.
 3. Seed it with one `ArtifactData` `batch`:
    - `wiki/meta`: `{domain, orchestrator: <this session's title>, session: <session_… id or "">,
-     process: <key>, boards: [], format: 3, createdAt, lastReviewAt: createdAt, lastReviewLog: 1}`.
+     process: <key>, boards: [], format: 3, createdAt, lastReviewAt: createdAt, lastReviewLog: 1, logSeq: 1}`.
    - `pages/charter`, `pages/decisions`, `pages/state`, `pages/gotchas` in the shapes of step 3.
      `charter` gets the domain, what is in and out of scope, and any standing rules the user
      gave. The others start with `items: []`.
@@ -112,8 +112,13 @@ lists, so the visible fields are for a person and `details` is for you:
 |---|---|---|---|
 | `pages/charter` | `{summary, inScope: [], outOfScope: [], rules: [], learned: [{text, why, since: "YYYY-MM-DD", details}], skills: [], details, updatedAt}` | edit in place | 6 per list |
 | `pages/decisions` | `{items: [{date: "YYYY-MM-DD", text, why, ref, details}], updatedAt}` | append, archive superseded | 15 items |
-| `pages/state` | `{items: [{title, ref, status, next, needsYou, details}], updatedAt}`; `status` is `running`, `review`, `done` or `paused` | overwrite whole, archive what leaves | 8 items |
-| `pages/gotchas` | `{items: [{topic, text, details}], updatedAt}` | append, archive stale | 10 items |
+| `pages/state` | `{items: [{title, ref, status, next, needsYou, doneAt, needsYouSince, details}], updatedAt}`; `status` is `running`, `review`, `done` or `paused` | overwrite whole, archive what leaves | 8 items |
+| `pages/gotchas` | `{items: [{topic, text, lastHitAt, details}], updatedAt}` | append, archive stale | 10 items |
+
+The review's age rules need three dates, kept as `YYYY-MM-DD`: set `doneAt` when an item's
+`status` becomes `done`, `needsYouSince` when `needsYou` is first set (clear both when they stop
+applying), and `lastHitAt` when a gotcha is added or bites again. Carry them over unchanged when
+you overwrite `state`.
 
 `rules` are the user's. `learned` are rules this session gave itself in a review (step 9); only a
 review adds or retires them, and "forget that rule" from the user removes one at once.
@@ -145,8 +150,9 @@ wrong, `topic` two or three words you'll reuse for the same kind of trouble ("lo
   rewrite the four pages into the shapes above, drop `body`, set `meta.format` to `3`, and log
   "Moved the wiki to the readable layout." The new page shows an old `body` as is until then.
 - `format: 2`: republish `wiki.html` the same way, then in one batch set `meta.format` to `3`,
-  `meta.lastReviewAt` to now and `meta.lastReviewLog` to the latest `n`, and log "Turned on the
-  archive and reviews." No page changes are needed.
+  `meta.lastReviewAt` to now, and `meta.logSeq` and `meta.lastReviewLog` to the latest `n` (one
+  `list` of `log`), and log "Turned on the archive and reviews." Existing items get no dates;
+  treat a missing date as the upgrade day.
 
 Write triggers: the user decides something or states a rule for the domain; a child starts,
 finishes or is archived (overwrite `state`); a plan board is created (add `{title, url}` to
@@ -157,7 +163,9 @@ Never write: child progress reports, CI runs, transcripts, tool output, diffs, g
 user hasn't approved, anything about another domain or thread, secrets or credentials.
 
 Each write is one `ArtifactData` `batch`, pinned with the `if_version` you last read: the page
-change (with `updatedAt`) plus one `log/e<n>` line saying which page and why. At most one wiki
+change (with `updatedAt`) plus one `log/e<n>` line saying which page and why, where `n` is
+`meta.logSeq + 1`, plus setting `meta.logSeq` to `n`. That keeps the log count readable from
+`meta` alone, which the review's due check needs. At most one wiki
 write per turn (a review, step 9, is one write). At a page's cap, merge items or move the ones
 that no longer hold to the archive (step 8) before adding; never just drop them. Keep the pages
 and the latest 40 log lines under about 2,000 tokens. The archive doesn't count: it is never read
@@ -217,7 +225,7 @@ repeats.
   sentence ("Superseded by the decision to keep the plugin id."). They sit under the `wiki` path,
   which is already owner-only, so no database rule changes.
 - What moves there: a decision that is superseded, a gotcha that no longer holds or was merged
-  into another, a state item `done` for 14 days or more, a retired learned rule, and log lines
+  into another, a state item whose `doneAt` is 14 or more days ago, a retired learned rule, and log lines
   rolled up (below). Never delete an item from a page without archiving it in the same batch.
 - Log rollup: keep the latest 40 `log/e<n>` docs. During a review, or when there are more than 60,
   move the older ones into their month's archive doc (`from: "log"`) and delete those log docs, in
@@ -231,8 +239,8 @@ repeats.
 The orchestrator looks at its own wiki and friction now and then, tidies up, and learns.
 
 **When.** Run a review when the user asks ("review the wiki", "what slows you down", "improve
-yourself"), or when one is due: 7 days since `meta.lastReviewAt`, or 25 log lines since
-`meta.lastReviewLog`. Check due on resume and when a page hits its cap. A due review runs at the
+yourself"), or when one is due: 7 days since `meta.lastReviewAt`, or `meta.logSeq` at least 25
+past `meta.lastReviewLog`. Check due on resume and when a page hits its cap. A due review runs at the
 end of a turn with no work in flight, never mid-task and never before the user's first reply. At
 most one review a day unless the user asks. Rule 6 applies: no subagent, schedule or loop.
 
@@ -247,12 +255,12 @@ memory or shared folder.
 |---|---|---|
 | Same friction `topic` 3 or more times | Add a learned rule that would have prevented it | on its own |
 | The same correction from the user twice | Propose a charter rule | ask |
-| A gotcha not hit in 30 days, or now covered by a rule | Archive it | on its own |
+| A gotcha whose `lastHitAt` is 30+ days ago, or now covered by a rule | Archive it | on its own |
 | A decision superseded by a later one | Archive it | on its own |
 | Two items saying the same thing | Merge them, archive the other | on its own |
-| A state item `done` for 14 days | Archive it | on its own |
+| A state item whose `doneAt` is 14+ days ago | Archive it | on its own |
 | An item that breaks the writing rules (ids in the sentence) | Reword it | on its own |
-| A `needsYou` older than 3 days | Raise it in the summary | on its own |
+| A `needsYouSince` 3+ days ago | Raise it in the summary | on its own |
 | A learned rule with no matching friction in 30 days | Retire it to the archive | on its own |
 | More than 60 log lines | Roll them up (step 8) | on its own |
 | A scope change, a change to or removal of a user rule, restoring a superseded decision | Propose it | ask |
@@ -272,7 +280,8 @@ Tiers:
 
 **Record.** In the same batch: the page changes, the archive entries, `wiki/review` =
 `{at, changed: [plain sentences], proposals: [{text, why}], declined: [{text, until}], details}`,
-`meta.lastReviewAt` and `meta.lastReviewLog`, and one log line ("Reviewed the wiki: archived 3
+`meta.lastReviewAt`, `meta.lastReviewLog` (the `n` of this review's log line) and `meta.logSeq`,
+and one log line ("Reviewed the wiki: archived 3
 gotchas, added 1 learned rule."). Set `proposals` back to `[]` once the user has answered.
 
 **Tell.** End with a short summary in chat: what changed, what needs the user, any suggestions.
