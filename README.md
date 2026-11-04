@@ -122,6 +122,11 @@ Run these from the plugin root after changing a skill:
 - `claude plugin eval . --tag artifact-plan`: three cases in `evals/artifact-plan/`.
 - `claude plugin eval . --tag orchestrator-wiki`: four cases in `evals/orchestrator-wiki/`.
 - `sh hooks/test_wiki_binding.sh`: checks the wiki binding script.
+- `python3 skills/artifact-plan/scripts/validate_plan.py --selftest`: checks the plan validator.
+
+CI (`.github/workflows/check.yml`) runs `claude plugin validate .` and the last two checks on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
+
+When a review finding is accepted, fix it with a check that fails before the fix and passes after it. Add that check to one of the scripts above, so CI keeps the bug from coming back.
 
 ## License
 
