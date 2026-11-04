@@ -29,10 +29,10 @@
       "alternateName": "cloud-local-bridge",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Claude Code (web, desktop, terminal)",
-      "description": "Claude Code plugin that hands browser, OAuth sign-in, desktop-app and local-file steps from a Claude Code on the web (claude.ai/code) session to a local Claude Desktop or Remote Control session, and returns the result. Also runs related tasks in parallel sessions and tracks them on a live plan board.",
+      "description": "Claude Code plugin that hands browser, OAuth sign-in, desktop-app and local-file steps from a Claude Code on the web (claude.ai/code) session to a local Claude Desktop or Remote Control session, and returns the result. Also runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki for long-running orchestrators so their context can be compacted or cleared safely.",
       "url": "https://shijianxi.github.io/cloud-local-bridge/",
       "downloadUrl": "https://github.com/ShiJianXi/cloud-local-bridge",
-      "softwareVersion": "1.5.0",
+      "softwareVersion": "1.6.0",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -51,7 +51,9 @@
         { "@type": "Question", "name": "Can the cloud session start a local session for me?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes, while claude remote-control --spawn worktree is running on your computer. Each new session gets its own git worktree." } },
         { "@type": "Question", "name": "Does Cloud Local Bridge collect any data?",
-          "acceptedAnswer": { "@type": "Answer", "text": "No. It has no servers, no scripts that call the network, and stores nothing. It is a set of instructions for Claude. Messages go between your own sessions through Claude Code's built-in tools." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "No. It has no servers and no network calls. It is a set of instructions for Claude plus one small script that keeps an orchestrator's wiki link on your own machine. Messages go between your own sessions through Claude Code's built-in tools." } },
+        { "@type": "Question", "name": "Can I clear or compact a long-running orchestrator?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's running as they happen, so /compact and /clear lose nothing, and it picks the wiki back up by itself. Each wiki is private to the one session that owns it." } },
         { "@type": "Question", "name": "Is it free?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes. It is free and open source under the MIT license." } }
       ]
@@ -252,7 +254,11 @@
       </details>
       <details>
         <summary>Does it collect data?</summary>
-        <p>No. No servers, no network calls. It's instructions for Claude.</p>
+        <p>No. No servers, no network calls. It's instructions for Claude, plus one small script that keeps an orchestrator's wiki link on your machine.</p>
+      </details>
+      <details>
+        <summary>Can I clear or compact a long-running orchestrator?</summary>
+        <p>Yes, if it keeps a wiki. It saves decisions and what's running as they happen, so <code>/compact</code> and <code>/clear</code> lose nothing. Each wiki is private to the session that owns it.</p>
       </details>
       <details>
         <summary>Is it free?</summary>
@@ -318,6 +324,15 @@
         { name: 'Done', tasks: [['T1 Settings API', 'PR merged, CI green']] }
       ]},
       { who: 'Orchestrator', role: 'cloud', text: 'I check each PR before marking a task done.' }
+    ]},
+    { title: 'Orchestrator wiki', blurb: 'Compact or clear a long-running orchestrator safely.', steps: [
+      { who: 'You', role: 'you', text: 'Own billing from now on. I want to clear your context now and then.' },
+      { who: 'Orchestrator', role: 'cloud', text: 'Keep a private wiki for billing?', choices: ['Keep a wiki (recommended)', 'No wiki'], pick: 0 },
+      { who: 'Orchestrator', role: 'cloud', text: 'Wiki is up. Only you and this session can read it.' },
+      { who: 'You', role: 'you', text: 'Ship v2 without SSO.' },
+      { who: 'Orchestrator', role: 'cloud', text: 'Noted in the wiki: decision, ship v2 without SSO.' },
+      { who: 'You', role: 'you', text: '/clear' },
+      { who: 'Orchestrator', role: 'cloud', text: 'Read my wiki. 2 sessions running, 1 PR waits on you. v2 ships without SSO.' }
     ]}
   ];
 
