@@ -1,15 +1,17 @@
 {
-  "name": "cloud-local-bridge",
-  "displayName": "Cloud Local Bridge",
-  "version": "1.6.0",
-  "description": "Let Claude Code on the web use your computer: hand browser, OAuth sign-in, desktop-app and local-file steps from a claude.ai/code session to a local Claude Desktop or Remote Control session, and get the result back. Also runs several related tasks in parallel sessions from one orchestrator, tracked on a live plan board, and keeps a private per-session wiki for long-running orchestrators.",
+  "name": "molt",
+  "displayName": "Molt",
+  "version": "2.0.0",
+  "description": "A Claude Code workflow kit that changes as best practices do. Today: hand browser, sign-in, desktop-app and local-file steps from a claude.ai/code session to your computer; run related tasks in parallel sessions tracked on a live plan board; and keep a private wiki for long-running orchestrators. Formerly Cloud Local Bridge.",
   "author": {
     "name": "ShiJianXi"
   },
-  "homepage": "https://github.com/ShiJianXi/cloud-local-bridge",
-  "repository": "https://github.com/ShiJianXi/cloud-local-bridge",
+  "homepage": "https://github.com/ShiJianXi/molt",
+  "repository": "https://github.com/ShiJianXi/molt",
   "license": "MIT",
   "keywords": [
+    "workflow",
+    "skills",
     "claude-code",
     "claude-code-on-the-web",
     "remote-control",
@@ -31,7 +33,7 @@
     "artifacts",
     "wiki"
   ],
-  "privacyPolicyUrl": "https://github.com/ShiJianXi/cloud-local-bridge/blob/main/PRIVACY.md",
-  "documentationUrl": "https://github.com/ShiJianXi/cloud-local-bridge#readme",
-  "supportUrl": "https://github.com/ShiJianXi/cloud-local-bridge/issues"
+  "privacyPolicyUrl": "https://github.com/ShiJianXi/molt/blob/main/PRIVACY.md",
+  "documentationUrl": "https://github.com/ShiJianXi/molt#readme",
+  "supportUrl": "https://github.com/ShiJianXi/molt/issues"
 }

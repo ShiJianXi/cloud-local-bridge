@@ -1,6 +1,6 @@
 # Privacy policy
 
-cloud-local-bridge is a set of instruction files (`skills/`) for Claude Code plus one small shell
+Molt is a set of instruction files (`skills/`) for Claude Code plus one small shell
 script (`hooks/wiki-binding.sh`). It has no servers, no MCP servers and no network calls of its own.
 
 - **Collects:** nothing. The plugin's author receives no data from it.
@@ -12,4 +12,4 @@ script (`hooks/wiki-binding.sh`). It has no servers, no MCP servers and no netwo
   your own Claude Code sessions with Claude Code's built-in `ListAgents` and `SendMessage` tools.
   Those messages are handled by Claude Code under Anthropic's privacy policy, not by this plugin.
 
-Questions: open an issue at https://github.com/ShiJianXi/cloud-local-bridge/issues.
+Questions: open an issue at https://github.com/ShiJianXi/molt/issues.

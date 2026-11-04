@@ -6,11 +6,13 @@
   },
   "plugins": [
     {
-      "name": "cloud-local-bridge",
+      "name": "molt",
       "source": "./",
-      "description": "Let Claude Code on the web use your computer: hand browser, OAuth sign-in, desktop-app and local-file steps from a claude.ai/code session to a local Claude Desktop or Remote Control session, and get the result back. Also runs several related tasks in parallel sessions from one orchestrator, tracked on a live plan board.",
+      "description": "A Claude Code workflow kit that changes as best practices do. Today: hand browser, sign-in, desktop-app and local-file steps from a claude.ai/code session to your computer; run related tasks in parallel sessions tracked on a live plan board; and keep a private wiki for long-running orchestrators. Formerly Cloud Local Bridge.",
       "category": "productivity",
       "tags": [
+        "workflow",
+        "skills",
         "claude-code",
         "claude-code-on-the-web",
         "remote-control",
@@ -28,8 +30,8 @@
         "parallel-sessions",
         "multi-session",
         "orchestrate",
-    "planning",
-    "artifacts"
+        "planning",
+        "artifacts"
       ]
     }
   ]

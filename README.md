@@ -1,11 +1,15 @@
-# Cloud Local Bridge for Claude Code
+# Molt for Claude Code
 
-**Let Claude Code on the web use your computer.**
+**A Claude Code workflow kit that sheds its shell as best practices change.**
 
-Cloud sessions on claude.ai/code can't open your browser, sign in to sites, or read your files.
-This plugin hands those steps to Claude on your computer and brings the result back.
+Molt bundles the skills I use to work with Claude Code, and it changes as the way I work changes.
+Today it hands browser, sign-in and local-file steps from cloud sessions to your computer, runs
+related tasks in parallel sessions, tracks them on a live plan board, and keeps long-running
+orchestrators' memory in a private wiki.
 
-[Website](https://shijianxi.github.io/cloud-local-bridge/) ·
+*Formerly Cloud Local Bridge. Already installed it? See [Renamed from Cloud Local Bridge](#renamed-from-cloud-local-bridge).*
+
+[Website](https://shijianxi.github.io/molt/) ·
 [Install](#install) ·
 [FAQ](#faq)
 
@@ -29,21 +33,21 @@ Add it once to your claude.ai account. Your cloud and local sessions both get it
 
 1. Open [Customize → Plugins](https://claude.ai/customize/plugins) on claude.ai or in Claude
    Desktop.
-2. Find **Cloud Local Bridge** under **Discover** and choose **Add**.
+2. Find **Molt** under **Discover** and choose **Add**.
 3. Start a new session.
 
 Not in Discover yet, or want the newest version? Choose **Add → Add marketplace** instead and enter
-`ShiJianXi/cloud-local-bridge`.
+`ShiJianXi/molt`.
 
 <details>
 <summary>Other ways to install</summary>
 
 | Way | Works in cloud sessions? |
 |---|---|
-| `/plugin install cloud-local-bridge --marketplace ShiJianXi/cloud-local-bridge` in a local session | No, that computer only |
+| `/plugin install molt --marketplace ShiJianXi/molt` in a local session | No, that computer only |
 | Upload each folder in `skills/` under claude.ai → Customize → Skills | Yes |
 | Copy the `skills/` folders into a repository's `.claude/skills/` | Only for that repository |
-| `npx skills add ShiJianXi/cloud-local-bridge` | No |
+| `npx skills add ShiJianXi/molt` | No |
 
 Pick one. Installing two ways loads everything twice.
 
@@ -83,6 +87,12 @@ git worktree and can use your browser.
 - An orchestrator with a wiki writes to it only when a fact would otherwise be lost. Only that
   session reads it. After `/compact` or `/clear` it picks the wiki back up by itself; after a
   restart, say "resume my <domain> orchestrator".
+
+## Renamed from Cloud Local Bridge
+
+This plugin was called **Cloud Local Bridge** (`cloud-local-bridge`) until version 2.0.0. Claude
+Code treats the new name as a different plugin, so an old install stops getting updates. Remove
+**Cloud Local Bridge** under Customize → Plugins and add **Molt**. Old GitHub links redirect here.
 
 ## FAQ
 
