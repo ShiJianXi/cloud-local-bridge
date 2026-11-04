@@ -87,6 +87,9 @@ git worktree and can use your browser.
 - An orchestrator with a wiki writes to it only when a fact would otherwise be lost. Only that
   session reads it. After `/compact` or `/clear` it picks the wiki back up by itself; after a
   restart, say "resume my <domain> orchestrator".
+- The wiki page shows what needs you first, then a card for each piece of work, then the
+  decisions and gotchas. Ids and tool names are kept in a "Technical details" fold. A wiki made
+  before 2.1.0 switches to this layout the next time it's resumed or written to.
 
 ## Renamed from Cloud Local Bridge
 
