@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
 /* Read-only view of one orchestrator's wiki, written for a person: needs you, now, decisions,
-   gotchas, charter, recent changes. Ids and tool names sit in "Technical details" folds.
+   gotchas, charter, last review, recent changes, archive. Ids and tool names sit in "Technical details" folds.
    Only the owner can read the data. */
 :root {
   --bg: #f4f5f7; --surface: #ffffff; --fg: #1a2130; --muted: #5d6676; --line: #dde1e8; --accent: #2f5bd3;
@@ -67,6 +67,10 @@ dl.tech dd { margin: 0; font-family: var(--mono); font-size: 12px; overflow-wrap
 ul.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; }
 ul.log li { display: grid; grid-template-columns: 9em 1fr; gap: 12px; }
 @media (max-width: 520px) { ul.log li { grid-template-columns: 1fr; gap: 0; } }
+.tag { font-size: 11.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.months { display: grid; gap: 8px; }
+.months details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; font-size: 14px; }
+.months ul { margin: 8px 0 0; }
 </style>
 
 <div class="wrap">
@@ -80,7 +84,9 @@ ul.log li { display: grid; grid-template-columns: 9em 1fr; gap: 12px; }
   <section aria-labelledby="dec-h"><h2 id="dec-h">Decisions</h2><div id="decisions"></div></section>
   <section aria-labelledby="got-h"><h2 id="got-h">Gotchas</h2><div id="gotchas"></div></section>
   <section aria-labelledby="ch-h"><h2 id="ch-h">Charter</h2><div id="charter"></div></section>
+  <section id="review-s" hidden aria-labelledby="rev-h"><h2 id="rev-h">Last review</h2><div id="review"></div></section>
   <section aria-labelledby="log-h"><h2 id="log-h">Recent changes</h2><ul class="log" id="log"></ul></section>
+  <section id="archive-s" hidden aria-labelledby="arc-h"><h2 id="arc-h">Archive</h2><div class="months" id="archive"></div></section>
 </div>
 
 <script>
@@ -89,7 +95,8 @@ const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 const fmt = (iso, withTime) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); const d = m ? new Date(+m[1], m[2] - 1, +m[3]) : new Date(iso); if (isNaN(d)) return iso || ""; return d.toLocaleString(undefined, withTime ? { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" } : { month: "short", day: "numeric" }); };
 const arr = (v) => (Array.isArray(v) ? v : []);
-let meta = null, pages = {}, log = [];
+const FROM = { decisions: "Decision", gotchas: "Gotcha", state: "Work", learned: "Learned rule", log: "Log" };
+let meta = null, review = null, archive = [], pages = {}, log = [];
 
 function tech(details) {
   const keys = details && typeof details === "object" ? Object.keys(details) : [];
@@ -119,8 +126,10 @@ function renderNow() {
     cards.append(c);
   });
   box.append(items.length ? cards : empty("Nothing running."));
-  const asks = items.filter((it) => it.needsYou), ul = $("ask-list"); ul.replaceChildren();
-  asks.forEach((it) => ul.append(el("li", null, it.needsYou)));
+  const asks = items.map((it) => it.needsYou).filter(Boolean);
+  arr(review && review.proposals).forEach((pr) => asks.push(`Review proposal: ${pr.text || ""}`));
+  const ul = $("ask-list"); ul.replaceChildren();
+  asks.forEach((a) => ul.append(el("li", null, a)));
   $("ask").hidden = !asks.length;
   $("ask-h").textContent = `Needs you · ${asks.length}`;
 }
@@ -163,8 +172,38 @@ function renderCharter() {
   const block = (title, list, wide) => { const d = el("div", wide ? "wide" : null); d.append(el("h3", null, title)); const ul = el("ul", "plain"); arr(list).forEach((x) => ul.append(el("li", null, x))); d.append(arr(list).length ? ul : empty("None.")); grid.append(d); return d; };
   block("In scope", p.inScope); block("Out of scope", p.outOfScope);
   const rules = block("Rules", p.rules, true); const t = tech(p.details); if (t) rules.append(t);
+  if (arr(p.learned).length) {
+    const d = el("div", "wide"), ul = el("ul", "plain");
+    d.append(el("h3", null, "Learned rules"), el("p", "why", "Rules this orchestrator gave itself after a review. Say “forget that rule” to remove one."));
+    p.learned.forEach((r) => { const li = el("li"); li.append(el("span", null, r.text || "")); if (r.why) li.append(el("div", "why", r.why)); const tl = tech(r.details); if (tl) li.append(tl); ul.append(li); });
+    d.append(ul); grid.append(d);
+  }
   if (arr(p.skills).length) { const d = el("div", "wide"), chips = el("div", "chips"); d.append(el("h3", null, "Skills")); p.skills.forEach((s) => chips.append(el("span", "chip", s))); d.append(chips); grid.append(d); }
   box.append(grid);
+}
+function itemText(it) { return (it && (it.text || it.title || it.topic)) || ""; }
+function renderReview() {
+  const box = $("review"); box.replaceChildren();
+  $("review-s").hidden = !review;
+  if (!review) return;
+  const c = el("article", "card");
+  c.append(el("span", "date", `Reviewed ${fmt(review.at, true)}`));
+  const changed = arr(review.changed);
+  if (changed.length) { const ul = el("ul", "plain"); changed.forEach((x) => ul.append(el("li", null, x))); c.append(ul); }
+  else c.append(empty("Nothing needed changing."));
+  const t = tech(review.details); if (t) c.append(t);
+  box.append(c);
+}
+function renderArchive() {
+  const box = $("archive"); box.replaceChildren();
+  const months = archive.slice().sort((a, b) => b.id.localeCompare(a.id, undefined, { numeric: true }));
+  $("archive-s").hidden = !months.length;
+  months.forEach((m) => {
+    const items = arr(m.items), d = el("details"), ul = el("ul", "plain");
+    d.append(el("summary", null, `${m.month || m.id.replace(/^archive-/, "")} · ${items.length} item${items.length === 1 ? "" : "s"}`));
+    items.forEach((x) => { const li = el("li"); li.append(el("span", "tag", (FROM[x.from] || x.from || "") + " "), el("span", null, itemText(x.item))); if (x.reason) li.append(el("div", "why", x.reason)); ul.append(li); });
+    d.append(ul); box.append(d);
+  });
 }
 function render() {
   $("domain").textContent = meta ? meta.domain || "Orchestrator wiki" : "No wiki yet";
@@ -176,7 +215,7 @@ function render() {
     if (latest) m.append(el("span", null, `Last updated ${fmt(latest, true)}`));
     arr(meta.boards).forEach((b, i) => { const a = el("a", null, b.title || `Plan board ${i + 1}`); a.href = b.url; a.target = "_blank"; a.rel = "noopener"; m.append(a); });
   }
-  renderNow(); renderDecisions(); renderGotchas(); renderCharter();
+  renderNow(); renderDecisions(); renderGotchas(); renderCharter(); renderReview(); renderArchive();
   const ul = $("log"); ul.replaceChildren();
   if (!log.length) ul.append(el("li", "empty", "Nothing written yet."));
   log.forEach((e) => { const li = el("li"); li.append(el("time", "muted", fmt(e.at, true)), el("span", null, e.text || "")); ul.append(li); });
@@ -188,7 +227,12 @@ function render() {
   const db = window.claude ? await window.claude.use("db") : null;
   if (!db) { clearTimeout(timer); fail("Only the wiki's owner can read it. Sign in to claude.ai as the owner."); return; }
   const onErr = () => { clearTimeout(timer); fail("Only the wiki's owner can read it."); };
-  db.doc("wiki/meta").onSnapshot((s) => { clearTimeout(timer); meta = s.data() || null; render(); }, onErr);
+  // The wiki collection holds meta, the last review and the archive months.
+  db.collection("wiki").onSnapshot((s) => {
+    clearTimeout(timer); meta = null; review = null; archive = [];
+    s.docs.forEach((d) => { const v = d.data(); if (d.id === "meta") meta = v; else if (d.id === "review") review = v; else if (d.id.startsWith("archive-")) archive.push({ id: d.id, ...v }); });
+    render();
+  }, onErr);
   db.collection("pages").onSnapshot((s) => { clearTimeout(timer); pages = {}; s.docs.forEach((d) => { pages[d.id] = d.data(); }); render(); }, onErr);
   db.collection("log").orderBy("at", "desc").limit(30).onSnapshot((s) => { log = s.docs.map((d) => d.data()); render(); }, onErr);
 })();
