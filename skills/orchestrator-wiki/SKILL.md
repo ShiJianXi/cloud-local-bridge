@@ -17,7 +17,7 @@ the orchestrator would otherwise lose on `/compact` or `/clear`, and nothing els
 
 The page is `wiki.html` in this skill's directory; the data lives in the artifact's database, so
 writes are database writes, never republishes. `<plugin root>/hooks/wiki-binding.sh` (two levels
-up from this skill's directory) ties the wiki to the running Claude process.
+up from this skill's directory) ties the wiki to the running session's host process.
 
 ## Facts that shape the procedure (November 2026, Claude Code 2.1.31x)
 
@@ -26,12 +26,18 @@ up from this skill's directory) ties the wiki to the running Claude process.
   current whenever either runs.
 - `/compact` keeps the session id. `/clear` starts a new session id (`SessionEnd` with reason
   `clear`, then `SessionStart` with source `clear`). Both stay in the same Claude process.
-- This plugin's `SessionStart` hook (matcher `compact|clear`) runs `wiki-binding.sh inject`: if this
-  process has a binding, it injects one line starting `orchestrator-wiki:` with the domain and the
-  link. Any other process (another session) gets nothing.
-- The hook ships with the plugin. Installed as bare skills (no plugin), nothing is injected:
-  after a compaction or `/clear` the user says "resume my <domain> orchestrator" and step 5 runs.
-  The script needs `sh` and `ps` (macOS, Linux, WSL).
+- This plugin's `SessionStart` hook runs `wiki-binding.sh start` at every session start. It
+  works out the session's host process (the first ancestor that isn't a shell, whatever its name:
+  `claude`, `node`, the Desktop app) and hands that key to Bash as `CLAUDE_WIKI_KEY` through
+  `CLAUDE_ENV_FILE`. After a compaction or `/clear`, if that host has a binding, it injects one line
+  starting `orchestrator-wiki:` with the domain and the link. Any other session is another process
+  and gets nothing.
+- Where `ps` can't walk the process tree (Git Bash on Windows), the key falls back to the session
+  id: compaction still re-attaches, `/clear` needs the manual resume below.
+- The hook ships with the plugin. Installed as bare skills (no plugin), or anywhere plugin hooks
+  don't run, nothing is injected: after a compaction or `/clear` the user says "resume my <domain>
+  orchestrator" and step 5 runs. If `CLAUDE_WIKI_KEY` is empty when you create the wiki, the hook
+  didn't run here: tell the user this once.
 - A new process loses the binding on purpose: a resumed cloud session in a fresh container, a
   restarted terminal, a switch from cloud to Desktop. Step 5 covers finding the wiki then.
 
