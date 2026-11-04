@@ -32,7 +32,7 @@
       "description": "Claude Code plugin that hands browser, OAuth sign-in, desktop-app and local-file steps from a Claude Code on the web (claude.ai/code) session to a local Claude Desktop or Remote Control session, and returns the result. Also runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki for long-running orchestrators so their context can be compacted or cleared safely.",
       "url": "https://shijianxi.github.io/molt/",
       "downloadUrl": "https://github.com/ShiJianXi/molt",
-      "softwareVersion": "1.6.0",
+      "softwareVersion": "2.1.0",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -328,7 +328,7 @@
     { title: 'Orchestrator wiki', blurb: 'Compact or clear a long-running orchestrator safely.', steps: [
       { who: 'You', role: 'you', text: 'Own billing from now on. I want to clear your context now and then.' },
       { who: 'Orchestrator', role: 'cloud', text: 'Keep a private wiki for billing?', choices: ['Keep a wiki (recommended)', 'No wiki'], pick: 0 },
-      { who: 'Orchestrator', role: 'cloud', text: 'Wiki is up. Only you and this session can read it.' },
+      { who: 'Orchestrator', role: 'cloud', text: 'Wiki is up. What needs you comes first; ids stay folded away. Only you and this session can read it.' },
       { who: 'You', role: 'you', text: 'Ship v2 without SSO.' },
       { who: 'Orchestrator', role: 'cloud', text: 'Noted in the wiki: decision, ship v2 without SSO.' },
       { who: 'You', role: 'you', text: '/clear' },
