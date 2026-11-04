@@ -12,7 +12,10 @@
 # Where ps can't walk the tree (Git Bash on Windows), the key falls back to the session id:
 # compaction still works, /clear then needs a manual resume. A restarted host loses the binding
 # on purpose.
-dir="${CLAUDE_WIKI_BINDINGS:-$HOME/.claude/orchestrator-wiki/bindings}"
+# Bindings live in the plugin's own data folder (CLAUDE_PLUGIN_DATA, set for hooks); the hook
+# hands that path to Bash with the key. Without it they go to the temp folder, which is enough:
+# a binding only lives as long as its host process anyway.
+dir="${CLAUDE_WIKI_BINDINGS:-${CLAUDE_PLUGIN_DATA:-${TMPDIR:-/tmp}/molt}/orchestrator-wiki-bindings}"
 
 host() {
   p=$$ i=0
@@ -34,7 +37,7 @@ case "$1" in
     sid=$(printf '%s' "$input" | field session_id)
     k=$(host) || k="s-$sid"
     [ "$k" = "s-" ] && exit 0
-    [ -n "$CLAUDE_ENV_FILE" ] && echo "export CLAUDE_WIKI_KEY='$k'" >> "$CLAUDE_ENV_FILE"
+    [ -n "$CLAUDE_ENV_FILE" ] && printf "export CLAUDE_WIKI_KEY='%s' CLAUDE_WIKI_BINDINGS='%s'\n" "$k" "$dir" >> "$CLAUDE_ENV_FILE"
     f="$dir/$k" prev=$(cat "$dir/$k.current" 2>/dev/null)
     mkdir -p "$dir" && printf '%s\n' "$sid" > "$dir/$k.current"
     [ -f "$f" ] || exit 0
