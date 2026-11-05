@@ -113,7 +113,8 @@ to the orchestrator, never to the user.
      it if public) and run the block below with p=<name> and r=<the clone's path>. Its skills
      load after your next tool call, without the "<name>:" prefix; where a skill says
      ${CLAUDE_PLUGIN_ROOT}, use the plugin folder the block prints. Never write "not reported"
-     or skip a step because a plugin wasn't loaded; if it still can't be, say so in your report.
+     or skip a step because a plugin wasn't loaded; if it still can't be, or the block printed
+     "skipped", say so in your report.
    Reply: send_message to <your session_… id>, never to the user. Send when: <milestones, e.g. PR
      open, CI green>, and when blocked on a decision. First line: one sentence with the outcome or
      the question.
@@ -130,7 +131,9 @@ to the orchestrator, never to the user.
    ls -d ~/.claude/plugins/synced/*/"$p" 2>/dev/null || {
      f=$(grep -lE "\"name\": *\"$p\"" $(find "$r" -path '*/.claude-plugin/plugin.json' -not -path '*/node_modules/*') | head -1)
      root=$(dirname "$(dirname "$f")"); echo "$root"; mkdir -p ~/.claude/skills
-     for s in "$root"/skills/*/; do ln -sfn "${s%/}" ~/.claude/skills/"$(basename "$s")"; done
+     for s in "$root"/skills/*/; do d=~/.claude/skills/$(basename "$s")
+       if [ -e "$d" ] && [ "$(readlink "$d")" != "${s%/}" ]; then echo "skipped $d: name taken"
+       else ln -sfn "${s%/}" "$d"; fi; done
    }
    ```
 
