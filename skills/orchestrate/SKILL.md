@@ -83,6 +83,10 @@ to the orchestrator, never to the user.
      ~/.claude/plugins/synced/*/*/.claude-plugin/plugin.json`. Keep the ones the task uses; that list is the
      brief's `Plugins` line. A plugin with no `repository` there: ask the user where it lives, or
      leave it out and say so.
+     Any plugin step the task must not skip (a script whose output goes in the PR, a required
+     check) goes into that child's `Done when` as an observable result, e.g. "PR's Cost section
+     filled from the plugin's cost script". Then a child that couldn't load the plugin fails
+     Done when instead of quietly skipping it.
    - Cloud: `create_session` per task with `title` = `<task> build`, `prompt` = the brief
      (step 5), `source_url` = the repository, `outcome_branch` = its branch, and
      `extra_allowed_tools` = [`mcp__claude-code-remote__send_message`] and
@@ -147,7 +151,8 @@ to the orchestrator, never to the user.
 7. **Relay and direct.** Match each incoming message's sender against the table. For each child
    message:
    - Milestone: pass it to the user in one line.
-   - Done (its `Done when` is met): pass the outcome on, then ask the user with `AskUserQuestion`
+   - Done (its `Done when` is met): check each plugin step in `Done when` yourself (read the PR
+     or its output). If one is missing or says "not reported", send the child back to do it. Then pass the outcome on, then ask the user with `AskUserQuestion`
      whether to archive that child's session. Options: **Keep it** (first; an archived child stops
      answering PR reviews and CI on its branch) and **Archive it**. On Archive, a cloud child gets
      `archive_session` with its `session_…` id; for a local child, tell the user to archive it in
