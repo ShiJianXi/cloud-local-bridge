@@ -57,7 +57,7 @@
         { "@type": "Question", "name": "Won't a wiki kept for months get huge?",
           "acceptedAnswer": { "@type": "Answer", "text": "No. The pages read on every resume stay capped. Old items move to a monthly archive in the same private wiki, and about once a week the orchestrator reviews its own friction: it tidies up and adds its own learned rules, and asks you before changing your rules or the scope. The review never runs in another session or on a schedule." } },
         { "@type": "Question", "name": "Why doesn't a session started by another session have my plugins?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Sessions you start from the app get your claude.ai plugins. A session another session starts can come up with only the built-in ones. The orchestrator tells each child which plugins it uses and where they live, and the child loads their skills itself. Hooks and MCP servers don't come across." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Sessions you start from the app get your claude.ai plugins. A session another session starts can come up with only the built-in ones. The orchestrator tells each child which plugins it uses and where they live, and the child loads their skills itself. Hooks and MCP servers don't come across. A plugin step that must happen goes in the child's done-when, and the orchestrator checks it before calling the task done." } },
         { "@type": "Question", "name": "Is it free?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes. It is free and open source under the MIT license." } }
       ]
@@ -270,7 +270,7 @@
       </details>
       <details>
         <summary>Why doesn't a session started by another session have my plugins?</summary>
-        <p>Sessions you start from the app get your claude.ai plugins. A session another session starts can come up with only the built-in ones. The orchestrator tells each child which plugins it uses and where they live, and the child loads their skills itself. Hooks and MCP servers don't come across.</p>
+        <p>Sessions you start from the app get your claude.ai plugins. A session another session starts can come up with only the built-in ones. The orchestrator tells each child which plugins it uses and where they live, and the child loads their skills itself. Hooks and MCP servers don't come across. A plugin step that must happen goes in the child's done-when, and the orchestrator checks it before calling the task done.</p>
       </details>
       <details>
         <summary>Is it free?</summary>
