@@ -1,5 +1,10 @@
 # Molt for Claude Code
 
+[![check](https://github.com/ShiJianXi/molt/actions/workflows/check.yml/badge.svg)](https://github.com/ShiJianXi/molt/actions/workflows/check.yml)
+[![version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FShiJianXi%2Fmolt%2Fmain%2F.claude-plugin%2Fplugin.json&query=%24.version&label=version)](.claude-plugin/plugin.json)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757.svg)](#install)
+
 **A Claude Code workflow kit that sheds its shell as best practices change.**
 
 Molt bundles the skills I use to work with Claude Code, and it changes as the way I work changes.
@@ -160,6 +165,10 @@ Run these from the plugin root after changing a skill:
 CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last four checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
 
 When a review finding is accepted, fix it with a check that fails before the fix and passes after it. Add that check to one of the scripts above, so CI keeps the bug from coming back.
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
