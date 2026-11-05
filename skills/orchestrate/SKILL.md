@@ -27,6 +27,12 @@ to the orchestrator, never to the user.
 - Children run in `auto` mode. Left to inherit, a child can come up in `acceptEdits` instead
   (`auto` is tied to a trusted-device proof the child doesn't get), so always pass
   `permission_mode` = `auto` to `create_session`.
+- A cloud child may start **without the user's claude.ai plugins**. Sessions started from the app
+  get them synced into `~/.claude/plugins/synced/`; a child from `create_session` sometimes gets
+  only the built-in `cc-plugin-*` ones, and nothing in `create_session` turns syncing on. A skill
+  directory linked into `~/.claude/skills/` loads mid-session (it shows up after the next tool
+  call), so the brief tells the child to load what's missing that way (step 5, `Plugins`). Only
+  skills come across: a plugin's hooks and MCP servers don't.
 - A cloud child replies with `send_message` to the orchestrator's `session_…` id, and the reply
   arrives here as a new turn. A local child can't: it replies with `SendMessage` to the
   orchestrator's **title** as its `ListAgents` row shows it (see the cloud-local-bridge skill).
@@ -71,6 +77,12 @@ to the orchestrator, never to the user.
    isn't `auto`, warn the user that the children can't be started in `auto` (they can't be more
    permissive than this session) and, in `default`, will stall on prompts, before going on.
 4. **Start the children.** Each one gets a new branch, never `main` or a branch another child uses.
+   - Before the first cloud child, list the plugins this session has and each one's repository:
+     `node -e 'for (const f of process.argv.slice(1)) { const j = require(f); console.log(j.name,
+     (j.repository && j.repository.url) || j.repository || "") }'
+     ~/.claude/plugins/synced/*/*/.claude-plugin/plugin.json`. Keep the ones the task uses; that list is the
+     brief's `Plugins` line. A plugin with no `repository` there: ask the user where it lives, or
+     leave it out and say so.
    - Cloud: `create_session` per task with `title` = `<task> build`, `prompt` = the brief
      (step 5), `source_url` = the repository, `outcome_branch` = its branch, and
      `extra_allowed_tools` = [`mcp__claude-code-remote__send_message`] and
@@ -96,6 +108,12 @@ to the orchestrator, never to the user.
      sessions, or touch a sibling's branch or item.
    Already done by the orchestrator: <shared work from step 2, facts found, decisions made>
    Siblings touch: <files or areas other tasks change; stay out of them or say why you can't>
+   Plugins (cloud child only): <name> (<owner/repo>), one per plugin from step 4. For each one
+     missing from ~/.claude/plugins/synced/*/, attach <owner/repo> with add_repo (or git clone
+     it if public) and run the block below with p=<name> and r=<the clone's path>. Its skills
+     load after your next tool call, without the "<name>:" prefix; where a skill says
+     ${CLAUDE_PLUGIN_ROOT}, use the plugin folder the block prints. Never write "not reported"
+     or skip a step because a plugin wasn't loaded; if it still can't be, say so in your report.
    Reply: send_message to <your session_… id>, never to the user. Send when: <milestones, e.g. PR
      open, CI green>, and when blocked on a decision. First line: one sentence with the outcome or
      the question.
@@ -104,6 +122,16 @@ to the orchestrator, never to the user.
      message.
    Never use AskUserQuestion: nobody watches this session. Send the question, end your turn, and
      the answer arrives as a new message.
+   ```
+
+   Paste this block into the brief right after it, when it has a `Plugins` line:
+
+   ```sh
+   ls -d ~/.claude/plugins/synced/*/"$p" 2>/dev/null || {
+     f=$(grep -lE "\"name\": *\"$p\"" $(find "$r" -path '*/.claude-plugin/plugin.json' -not -path '*/node_modules/*') | head -1)
+     root=$(dirname "$(dirname "$f")"); echo "$root"; mkdir -p ~/.claude/skills
+     for s in "$root"/skills/*/; do ln -sfn "${s%/}" ~/.claude/skills/"$(basename "$s")"; done
+   }
    ```
 
    If this session keeps an orchestrator wiki, copy the facts a child needs into `Already done by
