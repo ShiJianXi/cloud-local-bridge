@@ -84,6 +84,12 @@ git worktree and can use your browser.
 
 - Read the reply in the cloud session. Delivery back to the cloud isn't confirmed.
 - Run parallel tasks from a cloud session in **auto** mode, or they stall waiting for approvals.
+- A cloud session started by another session can come up without your claude.ai plugins. The
+  orchestrator lists the plugins it has in each child's brief, and a child that's missing one
+  attaches the plugin's repository and links its skills in, so they load mid-session. Only the
+  skills come across, not the plugin's hooks or MCP servers. A plugin step that must happen (say,
+  a script whose output goes in the PR) goes in the child's "done when", and the orchestrator
+  checks it before calling the task done.
 - Don't use bypass-permissions mode for the local session. It holds messages from the cloud, and
   Desktop drops them after 5 minutes.
 - An orchestrator with a wiki writes to it only when a fact would otherwise be lost. Only that
@@ -127,6 +133,12 @@ No. The pages read on every resume stay capped. What falls off them goes to a mo
 the same private wiki, and a regular review tidies up, merges duplicates and learns rules from
 recurring trouble. Say "forget that rule" to drop a learned rule.
 
+**Why doesn't a session started by another session have my plugins?**
+Sessions you start from the app get your claude.ai plugins. A session another session starts can
+come up with only the built-in ones, and nothing when starting it turns that on. The orchestrator
+tells each child which plugins it uses and where they live, and the child loads their skills
+itself.
+
 **Does it collect any data?**
 No. It has no servers and makes no network calls. See the [privacy policy](PRIVACY.md).
 
@@ -143,8 +155,9 @@ Run these from the plugin root after changing a skill:
 - `node skills/orchestrator-wiki/test_wiki_page.mjs`: checks the wiki page shows learned rules, the
   last review and the archive.
 - `python3 skills/artifact-plan/scripts/validate_plan.py --selftest`: checks the plan validator.
+- `sh skills/orchestrate/test_plugin_block.sh`: checks the brief's plugin-loading block.
 
-CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last three checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
+CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last four checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
 
 When a review finding is accepted, fix it with a check that fails before the fix and passes after it. Add that check to one of the scripts above, so CI keeps the bug from coming back.
 

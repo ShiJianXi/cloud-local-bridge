@@ -19,3 +19,4 @@ jobs:
       - run: sh hooks/test_wiki_binding.sh
       - run: node skills/orchestrator-wiki/test_wiki_page.mjs
       - run: python3 skills/artifact-plan/scripts/validate_plan.py --selftest
+      - run: sh skills/orchestrate/test_plugin_block.sh
