@@ -32,7 +32,7 @@
       "description": "Claude Code plugin that hands browser, OAuth sign-in, desktop-app and local-file steps from a Claude Code on the web (claude.ai/code) session to a local Claude Desktop or Remote Control session, and returns the result. Also runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki for long-running orchestrators so their context can be compacted or cleared safely. The wiki archives old items instead of growing, and the orchestrator reviews its own friction to tidy up and learn rules.",
       "url": "https://shijianxi.github.io/molt/",
       "downloadUrl": "https://github.com/ShiJianXi/molt",
-      "softwareVersion": "2.2.0",
+      "softwareVersion": "2.3.0",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -56,6 +56,8 @@
           "acceptedAnswer": { "@type": "Answer", "text": "Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's running as they happen, so /compact and /clear lose nothing, and it picks the wiki back up by itself. Each wiki is private to the one session that owns it." } },
         { "@type": "Question", "name": "Won't a wiki kept for months get huge?",
           "acceptedAnswer": { "@type": "Answer", "text": "No. The pages read on every resume stay capped. Old items move to a monthly archive in the same private wiki, and about once a week the orchestrator reviews its own friction: it tidies up and adds its own learned rules, and asks you before changing your rules or the scope. The review never runs in another session or on a schedule." } },
+        { "@type": "Question", "name": "Why doesn't a session started by another session have my plugins?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Sessions you start from the app get your claude.ai plugins. A session another session starts can come up with only the built-in ones. The orchestrator tells each child which plugins it uses and where they live, and the child loads their skills itself. Hooks and MCP servers don't come across." } },
         { "@type": "Question", "name": "Is it free?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes. It is free and open source under the MIT license." } }
       ]
@@ -265,6 +267,10 @@
       <details>
         <summary>Won't a wiki kept for months get huge?</summary>
         <p>No. The pages it reads on every resume stay capped. Old items move to a monthly archive in the same private wiki, and nothing is deleted. About once a week the orchestrator reviews its own friction: it tidies up and adds its own learned rules, and asks you before changing your rules or the scope. The review never runs in another session or on a schedule.</p>
+      </details>
+      <details>
+        <summary>Why doesn't a session started by another session have my plugins?</summary>
+        <p>Sessions you start from the app get your claude.ai plugins. A session another session starts can come up with only the built-in ones. The orchestrator tells each child which plugins it uses and where they live, and the child loads their skills itself. Hooks and MCP servers don't come across.</p>
       </details>
       <details>
         <summary>Is it free?</summary>
