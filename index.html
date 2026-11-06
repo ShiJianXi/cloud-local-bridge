@@ -53,7 +53,7 @@
         { "@type": "Question", "name": "Does Molt collect any data?",
           "acceptedAnswer": { "@type": "Answer", "text": "No. It has no servers, no hooks and no network calls. It is a set of instructions for Claude. Messages go between your own sessions through Claude Code's built-in tools." } },
         { "@type": "Question", "name": "Can I clear or compact a long-running orchestrator?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's running as they happen, so /compact and /clear lose nothing: afterwards, say \"resume my billing orchestrator\" and it reads the wiki first. Each wiki is private to the one session that owns it." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's running as they happen, so /compact and /clear lose nothing: prefer /compact, which usually keeps it working from the wiki; after /clear, say \"resume my billing orchestrator\" and it reads the wiki first. Each wiki is private to the one session that owns it." } },
         { "@type": "Question", "name": "Won't a wiki kept for months get huge?",
           "acceptedAnswer": { "@type": "Answer", "text": "No. The pages read on every resume stay capped. Old items move to a monthly archive in the same private wiki, and about once a week the orchestrator reviews its own friction: it tidies up and adds its own learned rules, and asks you before changing your rules or the scope. The review never runs in another session or on a schedule." } },
         { "@type": "Question", "name": "Why doesn't a session started by another session have my plugins?",
@@ -262,7 +262,7 @@
       </details>
       <details>
         <summary>Can I clear or compact a long-running orchestrator?</summary>
-        <p>Yes, if it keeps a wiki. It saves decisions and what's running as they happen, so <code>/compact</code> and <code>/clear</code> lose nothing: afterwards, say "resume my billing orchestrator" and it reads the wiki first. Each wiki is private to the session that owns it.</p>
+        <p>Yes, if it keeps a wiki. It saves decisions and what's running as they happen, so <code>/compact</code> and <code>/clear</code> lose nothing: prefer <code>/compact</code>, which usually keeps it working from the wiki; after <code>/clear</code>, say "resume my billing orchestrator" and it reads the wiki first. Each wiki is private to the session that owns it.</p>
       </details>
       <details>
         <summary>Won't a wiki kept for months get huge?</summary>
