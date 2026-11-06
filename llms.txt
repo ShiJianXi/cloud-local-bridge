@@ -1,6 +1,6 @@
 # Molt
 
-> Molt is a free, open-source Claude Code plugin: a workflow kit that sheds its shell as Claude Code best practices change. Today it ships orchestration skills. One Claude Code session acts as an orchestrator that runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki so it can run for weeks. It also hands browser, sign-in and local-file steps from cloud sessions to your computer.
+> Molt is a free, open-source Claude Code plugin: a workflow kit that sheds its shell as the way we work with Claude changes. Today it ships orchestration skills. One Claude Code session acts as an orchestrator that runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki so it can run for weeks. It also hands browser, sign-in and local-file steps from cloud sessions to your computer.
 
 Install: on claude.ai open Customize → Plugins, find Molt under Discover and choose Add. Or, in a local Claude Code session: `/plugin install molt --marketplace ShiJianXi/molt`. MIT license. No servers, hooks or data collection. Formerly called Cloud Local Bridge.
 
