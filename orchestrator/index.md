@@ -56,4 +56,4 @@ The wiki doesn't grow forever. Old items move to a monthly archive, and about on
 
 **Is it free?** Yes. Free and open source under the MIT license. No servers and no data collected.
 
-Orchestration is today's workflow in Molt. Molt is a workflow kit that changes as Claude Code best practices do, and this page will stay up when the next way of working arrives. [See the whole kit](https://shijianxi.github.io/molt/).
+Orchestration is today's workflow in Molt. Molt is a workflow kit that follows how its author works with Claude and where the community is heading, and this page will stay up when the next way of working arrives. [See the whole kit](https://shijianxi.github.io/molt/).
