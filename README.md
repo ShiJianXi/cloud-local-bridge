@@ -5,7 +5,7 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757.svg)](#install)
 
-**A Claude Code workflow kit that sheds its shell as best practices change.**
+**A Claude Code workflow kit that sheds its shell as the way we work with Claude changes.**
 
 Molt bundles the skills I use to work with Claude Code, and it changes as the way I work changes.
 
