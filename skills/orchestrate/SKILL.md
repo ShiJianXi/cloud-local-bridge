@@ -86,9 +86,10 @@ to the orchestrator, never to the user.
      Attaching a plugin's repository with `add_repo` widens what the child can reach, and the
      child's auto-mode check blocks it unless the user approved it: a brief alone isn't the
      user's approval. So ask the user once, with `AskUserQuestion`, for all the children:
-     "Let the children attach <owner/repo, ...> to load those plugins?" On a yes, put it in each
-     brief's `Allowed` line. On a no, leave those plugins out of `Plugins` and tell the user
-     which plugin steps the children can't do.
+     "Let the children attach <owner/repo, ...> to load those plugins?" On a yes, each brief's
+     `Allowed` line names only the repositories in that child's own `Plugins` line. On a no,
+     leave those plugins out of `Plugins` and their steps out of `Done when`, and tell the user
+     which plugin steps the children won't do before starting them.
      Any plugin step the task must not skip (a script whose output goes in the PR, a required
      check) goes into that child's `Done when` as an observable result, e.g. "PR's Cost section
      filled from the plugin's cost script". Then a child that couldn't load the plugin fails
