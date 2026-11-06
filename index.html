@@ -32,7 +32,7 @@
       "description": "Claude Code plugin that hands browser, OAuth sign-in, desktop-app and local-file steps from a Claude Code on the web (claude.ai/code) session to a local Claude Desktop or Remote Control session, and returns the result. Also runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki for long-running orchestrators so their context can be compacted or cleared safely. The wiki archives old items instead of growing, and the orchestrator reviews its own friction to tidy up and learn rules.",
       "url": "https://shijianxi.github.io/molt/",
       "downloadUrl": "https://github.com/ShiJianXi/molt",
-      "softwareVersion": "2.3.1",
+      "softwareVersion": "2.4.0",
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -51,9 +51,9 @@
         { "@type": "Question", "name": "Can the cloud session start a local session for me?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes, while claude remote-control --spawn worktree is running on your computer. Each new session gets its own git worktree." } },
         { "@type": "Question", "name": "Does Molt collect any data?",
-          "acceptedAnswer": { "@type": "Answer", "text": "No. It has no servers and no network calls. It is a set of instructions for Claude plus one small script that keeps an orchestrator's wiki link on your own machine. Messages go between your own sessions through Claude Code's built-in tools." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "No. It has no servers, no hooks and no network calls. It is a set of instructions for Claude. Messages go between your own sessions through Claude Code's built-in tools." } },
         { "@type": "Question", "name": "Can I clear or compact a long-running orchestrator?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's running as they happen, so /compact and /clear lose nothing, and it picks the wiki back up by itself. Each wiki is private to the one session that owns it." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's running as they happen, so /compact and /clear lose nothing: prefer /compact, which usually keeps it working from the wiki; after /clear, say \"resume my billing orchestrator\" and it reads the wiki first. Each wiki is private to the one session that owns it." } },
         { "@type": "Question", "name": "Won't a wiki kept for months get huge?",
           "acceptedAnswer": { "@type": "Answer", "text": "No. The pages read on every resume stay capped. Old items move to a monthly archive in the same private wiki, and about once a week the orchestrator reviews its own friction: it tidies up and adds its own learned rules, and asks you before changing your rules or the scope. The review never runs in another session or on a schedule." } },
         { "@type": "Question", "name": "Why doesn't a session started by another session have my plugins?",
@@ -258,11 +258,11 @@
       </details>
       <details>
         <summary>Does it collect data?</summary>
-        <p>No. No servers, no network calls. It's instructions for Claude, plus one small script that keeps an orchestrator's wiki link on your machine.</p>
+        <p>No. No servers, no hooks, no network calls. It's instructions for Claude.</p>
       </details>
       <details>
         <summary>Can I clear or compact a long-running orchestrator?</summary>
-        <p>Yes, if it keeps a wiki. It saves decisions and what's running as they happen, so <code>/compact</code> and <code>/clear</code> lose nothing. Each wiki is private to the session that owns it.</p>
+        <p>Yes, if it keeps a wiki. It saves decisions and what's running as they happen, so <code>/compact</code> and <code>/clear</code> lose nothing: prefer <code>/compact</code>, which usually keeps it working from the wiki; after <code>/clear</code>, say "resume my billing orchestrator" and it reads the wiki first. Each wiki is private to the session that owns it.</p>
       </details>
       <details>
         <summary>Won't a wiki kept for months get huge?</summary>
@@ -345,6 +345,7 @@
       { who: 'You', role: 'you', text: 'Ship v2 without SSO.' },
       { who: 'Orchestrator', role: 'cloud', text: 'Noted in the wiki: decision, ship v2 without SSO.' },
       { who: 'You', role: 'you', text: '/clear' },
+      { who: 'You', role: 'you', text: 'Resume my billing orchestrator.' },
       { who: 'Orchestrator', role: 'cloud', text: 'Read my wiki. 2 sessions running, 1 PR waits on you. v2 ships without SSO.' }
     ]},
     { title: 'Self-improving wiki', blurb: 'Weeks later, the wiki is still small and the orchestrator has learned.', steps: [
