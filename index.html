@@ -8,8 +8,7 @@
 <link rel="alternate" type="text/markdown" href="https://shijianxi.github.io/molt/index.md" title="Markdown version">
 <link rel="canonical" href="https://shijianxi.github.io/molt/">
 <link rel="icon" type="image/png" href="assets/icon.png">
-<meta name="theme-color" content="#0c0c0c" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#fafaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0c0c">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Molt">
@@ -487,9 +486,9 @@
 </script>
 <script>
 (function () {
-  var b = document.getElementById('theme'), r = document.documentElement, m = matchMedia('(prefers-color-scheme: light)');
+  var tc = document.querySelector('meta[name="theme-color"]'), b = document.getElementById('theme'), r = document.documentElement, m = matchMedia('(prefers-color-scheme: light)');
   function cur() { return r.dataset.theme || (m.matches ? 'light' : 'dark'); }
-  function label() { var n = cur() === 'dark' ? 'light' : 'dark'; b.setAttribute('aria-label', 'Switch to ' + n + ' theme'); b.title = 'Switch to ' + n + ' theme'; }
+  function label() { var n = cur() === 'dark' ? 'light' : 'dark'; b.setAttribute('aria-label', 'Switch to ' + n + ' theme'); b.title = 'Switch to ' + n + ' theme'; tc.content = cur() === 'dark' ? '#0c0c0c' : '#fafaf7'; }
   b.addEventListener('click', function () {
     var n = cur() === 'dark' ? 'light' : 'dark';
     r.dataset.theme = n;

@@ -8,8 +8,7 @@
 <link rel="canonical" href="https://shijianxi.github.io/molt/orchestrator/">
 <link rel="alternate" type="text/markdown" href="https://shijianxi.github.io/molt/orchestrator/index.md" title="Markdown version">
 <link rel="icon" type="image/png" href="../assets/icon.png">
-<meta name="theme-color" content="#0c0c0c" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#fafaf7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0c0c">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Molt">
 <meta property="og:title" content="Claude Code orchestrator: run parallel sessions from one chat">
@@ -72,6 +71,7 @@
   th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-top: 1px solid var(--line); }
   th { color: var(--ink); } td { color: var(--muted); }
   .btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: var(--r); font-weight: 700; text-decoration: none; background: var(--accent); color: var(--accent-ink); }
+  @media (max-width: 400px) { header nav { gap: 14px; } header nav .opt { display: none; } }
   footer { margin-top: 72px; padding: 28px 0; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px 20px; }
   footer a { color: var(--muted); }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -87,7 +87,7 @@
 <div class="wrap">
 <header>
   <a href="../">Molt</a>
-  <nav><a href="../#skills">Skills</a><a href="../#install">Install</a><a href="https://github.com/ShiJianXi/molt">GitHub</a><button class="theme" id="theme" type="button" aria-label="Switch theme"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 0 0 13z" fill="currentColor"/></svg></button></nav>
+  <nav><a class="opt" href="../#skills">Skills</a><a href="../#install">Install</a><a href="https://github.com/ShiJianXi/molt">GitHub</a><button class="theme" id="theme" type="button" aria-label="Switch theme"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 0 0 13z" fill="currentColor"/></svg></button></nav>
 </header>
 
 <main>
@@ -153,9 +153,9 @@ Review the wiki.</pre>
 </div>
 <script>
 (function () {
-  var b = document.getElementById('theme'), r = document.documentElement, m = matchMedia('(prefers-color-scheme: light)');
+  var tc = document.querySelector('meta[name="theme-color"]'), b = document.getElementById('theme'), r = document.documentElement, m = matchMedia('(prefers-color-scheme: light)');
   function cur() { return r.dataset.theme || (m.matches ? 'light' : 'dark'); }
-  function label() { var n = cur() === 'dark' ? 'light' : 'dark'; b.setAttribute('aria-label', 'Switch to ' + n + ' theme'); b.title = 'Switch to ' + n + ' theme'; }
+  function label() { var n = cur() === 'dark' ? 'light' : 'dark'; b.setAttribute('aria-label', 'Switch to ' + n + ' theme'); b.title = 'Switch to ' + n + ' theme'; tc.content = cur() === 'dark' ? '#0c0c0c' : '#fafaf7'; }
   b.addEventListener('click', function () {
     var n = cur() === 'dark' ? 'light' : 'dark';
     r.dataset.theme = n;
