@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Molt – A Claude Code workflow kit that changes as best practices do</title>
-<meta name="description" content="Free Claude Code plugin, formerly Cloud Local Bridge. Hand browser, OAuth sign-in, desktop-app and local-file steps from claude.ai/code to Claude on your computer, and get the result back.">
+<title>Molt: Claude Code orchestration skills, in a workflow kit that sheds its shell</title>
+<meta name="description" content="Free Claude Code plugin. Today: an orchestrator that runs tasks in parallel sessions, tracks them on a live plan board and keeps a private wiki so it can run for weeks. Also hands browser and local-file steps to your computer.">
+<link rel="alternate" type="text/markdown" href="https://shijianxi.github.io/molt/index.md" title="Markdown version">
 <link rel="canonical" href="https://shijianxi.github.io/molt/">
 <link rel="icon" type="image/png" href="assets/icon.png">
 <meta name="theme-color" content="#0c0c0c">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Molt">
-<meta property="og:title" content="Molt – A Claude Code workflow kit that changes as best practices do">
-<meta property="og:description" content="Browser, OAuth sign-in and local files, handed to your machine. Result sent back. Free Claude Code plugin.">
+<meta property="og:title" content="Molt: Claude Code orchestration skills, in a workflow kit that sheds its shell">
+<meta property="og:description" content="Run Claude Code tasks in parallel sessions from one chat, track them on a live plan board, and keep the orchestrator's memory in a private wiki. Free plugin.">
 <meta property="og:url" content="https://shijianxi.github.io/molt/">
 <meta property="og:image" content="https://shijianxi.github.io/molt/assets/social-preview.png">
 <meta property="og:image:width" content="1280">
@@ -29,10 +30,12 @@
       "alternateName": ["Cloud Local Bridge", "cloud-local-bridge"],
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Claude Code (web, desktop, terminal)",
-      "description": "Claude Code plugin that hands browser, OAuth sign-in, desktop-app and local-file steps from a Claude Code on the web (claude.ai/code) session to a local Claude Desktop or Remote Control session, and returns the result. Also runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki for long-running orchestrators so their context can be compacted or cleared safely. The wiki archives old items instead of growing, and the orchestrator reviews its own friction to tidy up and learn rules.",
+      "description": "Claude Code orchestration skills: one session orchestrates related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki so it can be compacted or cleared safely and run for weeks. The kit changes as Claude Code best practices change. It also hands browser, OAuth sign-in, desktop-app and local-file steps from a Claude Code on the web (claude.ai/code) session to a local Claude Desktop or Remote Control session, and returns the result. Also runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki for long-running orchestrators so their context can be compacted or cleared safely. The wiki archives old items instead of growing, and the orchestrator reviews its own friction to tidy up and learn rules.",
       "url": "https://shijianxi.github.io/molt/",
       "downloadUrl": "https://github.com/ShiJianXi/molt",
-      "softwareVersion": "2.4.0",
+      "softwareVersion": "2.4.1",
+      "keywords": "Claude Code orchestrator, Claude Code orchestration skills, multi-agent, parallel sessions, agent orchestration, Claude Code plugin, Claude Code skills, plan board, orchestrator wiki",
+      "featureList": ["Orchestrate related tasks in parallel Claude Code sessions", "Live plan board with task order and blockers", "Private wiki that lets a long-running orchestrator survive /compact and /clear", "Self-review that archives old items and learns rules", "Hand browser, OAuth sign-in, desktop-app and local-file steps from cloud sessions to your computer"],
       "license": "https://opensource.org/licenses/MIT",
       "isAccessibleForFree": true,
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -42,6 +45,12 @@
     {
       "@type": "FAQPage",
       "mainEntity": [
+        { "@type": "Question", "name": "What is a Claude Code orchestrator?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A Claude Code orchestrator is one session that plans the work and hands each task to its own session, instead of doing everything in one long chat. You talk only to the orchestrator. It starts the sessions, passes their questions to you, checks each pull request and tracks progress. Molt gives Claude Code the skills to work this way." } },
+        { "@type": "Question", "name": "How do I orchestrate several Claude Code sessions at once?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Install Molt and say \"orchestrate these tasks, one session each\". The orchestrator starts a session per task, each on its own branch, and passes their questions to you in one place. Say \"plan this and track it on a board\" to get a live plan board." } },
+        { "@type": "Question", "name": "How is this different from subagents?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A subagent runs inside one session and reports back once. Molt's orchestrator starts full sessions, each on its own branch, that can ask you questions while they work. Code tasks usually end in their own pull request, and for bigger plans with dependent tasks it offers a live plan board." } },
         { "@type": "Question", "name": "How do I let Claude Code on the web do something that needs my computer?",
           "acceptedAnswer": { "@type": "Answer", "text": "Install Molt and ask the cloud session to hand that step to your computer. A local Claude session does it and sends the result back. Browser use, OAuth sign-ins, local files, desktop apps and local MCP servers all work this way." } },
         { "@type": "Question", "name": "Why does SendMessage say \"No agent named 'session_…' is reachable\"?",
@@ -156,6 +165,13 @@
   .copy:hover { color: var(--ink); }
   pre { margin: 0; padding: 20px; background: var(--code); color: var(--accent); border: 1px solid var(--line); border-radius: var(--r); font: 14px/1.6 var(--mono); white-space: pre-wrap; word-break: break-word; }
 
+  .today { font-size: clamp(18px, 2.2vw, 22px); font-weight: 700; color: var(--accent); margin: 0 0 16px; }
+  .answer { max-width: 820px; }
+  .answer p { font-size: 17px; color: var(--muted); margin: 0; }
+  .skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .skills article { padding: 20px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); min-width: 0; }
+  .skills h3 { margin: 0 0 8px; font-size: 17px; color: var(--accent); }
+  .skills p { margin: 0; font-size: 14px; color: var(--muted); }
   .faq { max-width: 820px; }
   details { border-top: 1px solid var(--line); padding: 18px 0; }
   details:last-of-type { border-bottom: 1px solid var(--line); }
@@ -180,6 +196,7 @@
       Molt
     </a>
     <nav>
+      <a class="opt" href="orchestrator/">Orchestrator</a>
       <a class="opt" href="#features">Features</a>
       <a class="opt" href="#install">Install</a>
       <a href="https://github.com/ShiJianXi/molt">GitHub</a>
@@ -191,15 +208,36 @@
   <section style="border-top: 1px solid var(--line)">
     <div class="wrap pad">
       <h1>A Claude Code workflow kit that sheds its shell as best practices change.</h1>
-      <p class="lead">Molt bundles the skills I use to work with Claude Code, and changes as that way of working does. Today it lets cloud sessions use your computer, runs tasks in parallel on a live plan board, and keeps a private wiki for long-running orchestrators. Formerly Cloud Local Bridge: if you installed it under that name, remove it and add Molt.</p>
+      <p class="today">Today: <a href="orchestrator/">orchestration skills for Claude Code</a>.</p>
+      <p class="lead">Molt bundles the skills I use to work with Claude Code, and changes as that way of working does. Today that means one orchestrator session that runs related tasks in parallel sessions, tracks them on a live plan board and keeps a private wiki so it can run for weeks. It also lets cloud sessions use your computer. Formerly Cloud Local Bridge: if you installed it under that name, remove it and add Molt.</p>
       <div class="btns">
         <a class="btn primary" href="#install">Install free</a>
         <a class="btn ghost" href="#features">See what it does</a>
       </div>
       <div class="flow">
-        <div><b>01 CLOUD SESSION</b><p>You ask for something only your computer can do.</p></div>
-        <div><b>02 YOUR COMPUTER</b><p>A local Claude session does it.</p></div>
-        <div><b>03 BACK TO THE CLOUD</b><p>The result lands in the session that asked.</p></div>
+        <div><b>01 ONE CHAT</b><p>You describe the work to one orchestrator.</p></div>
+        <div><b>02 PARALLEL SESSIONS</b><p>Each task runs in its own session and branch.</p></div>
+        <div><b>03 ONE PLACE</b><p>Questions, progress and pull requests come back to you.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="what">
+    <div class="wrap pad answer">
+      <h2>What is a Claude Code orchestrator?</h2>
+      <p>A Claude Code orchestrator is one session that plans the work and hands each task to its own session, instead of doing everything in one long chat. You talk only to the orchestrator. It starts the sessions, passes their questions to you, checks each pull request and tracks progress. Molt gives Claude Code the skills to work this way. The orchestrator runs in a claude.ai/code cloud session, and its tasks run in cloud sessions or on your computer. <a href="orchestrator/">How it works</a>.</p>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap pad">
+      <h2>The skills in the kit</h2>
+      <p class="sub">Four Claude Code skills. Claude picks the right one from what you ask.</p>
+      <div class="skills">
+        <article><h3>orchestrate</h3><p>Splits a request into tasks and runs each in its own Claude Code session, in the cloud or on your computer. You talk to one session; it relays questions, checks pull requests and asks before archiving finished sessions.</p></article>
+        <article><h3>artifact-plan</h3><p>A live plan board for work with several dependent tasks. It shows every task, its order and what blocks it, and updates as each session reports. A task only moves to done once its pull request is checked.</p></article>
+        <article><h3>orchestrator-wiki</h3><p>A private wiki for a long-running orchestrator, one per domain. It saves decisions and running work as they happen, so you can <code>/compact</code> or <code>/clear</code> and say "resume my billing orchestrator". Old items move to a monthly archive, and the orchestrator reviews its own friction to learn rules.</p></article>
+        <article><h3>cloud-local-bridge</h3><p>Hands browser use, OAuth sign-ins, local files, desktop apps and local MCP servers from a claude.ai/code cloud session to a Claude session on your computer, and sends the result back.</p></article>
       </div>
     </div>
   </section>
@@ -240,6 +278,14 @@
   <section>
     <div class="wrap pad faq">
       <h2 style="margin-bottom:32px">Questions</h2>
+      <details>
+        <summary>How do I orchestrate several Claude Code sessions at once?</summary>
+        <p>Install Molt and say "orchestrate these tasks, one session each". The orchestrator starts a session per task, each on its own branch, and passes their questions to you in one place. Say "plan this and track it on a board" to get a live plan board.</p>
+      </details>
+      <details>
+        <summary>How is this different from subagents?</summary>
+        <p>A subagent runs inside one session and reports back once. Molt's orchestrator starts full sessions, each on its own branch, that can ask you questions while they work. Code tasks usually end in their own pull request, and for bigger plans with dependent tasks it offers a live plan board.</p>
+      </details>
       <details>
         <summary>How do I let Claude Code on the web do something that needs my computer?</summary>
         <p>Ask it to hand that step to your computer. A local Claude session does it and sends the result back. Browser use, OAuth sign-ins, local files and desktop apps all work this way.</p>
@@ -284,6 +330,8 @@
   <div class="wrap">
     <span>Molt · MIT</span>
     <nav>
+      <a href="orchestrator/">Orchestrator</a>
+      <a href="llms.txt">llms.txt</a>
       <a href="https://github.com/ShiJianXi/molt">GitHub</a>
       <a href="https://github.com/ShiJianXi/molt#readme">Docs</a>
       <a href="https://github.com/ShiJianXi/molt/blob/main/PRIVACY.md">Privacy</a>
@@ -296,26 +344,6 @@
 <script>
 (function () {
   var FEATURES = [
-    { title: 'Tasks that need your computer', blurb: 'Let a cloud session use your machine.', steps: [
-      { who: 'Cloud', role: 'cloud', text: 'This step needs local access. I can hand it to Claude on your computer, for example to:', choices: ['Use your browser', 'Do an OAuth sign-in', 'Read local files', 'Use a desktop app', 'Call a local MCP server'] },
-      { who: 'You', role: 'you', text: 'Go ahead.' },
-      { who: 'Cloud', role: 'cloud', text: 'Handed off, with a note saying where to send the result.' },
-      { who: 'Local', role: 'local', text: 'Doing it on your machine.' },
-      { who: 'Local', role: 'local', text: 'Done. Result sent back to the cloud session.' },
-      { who: 'Cloud', role: 'cloud', text: 'Result received. Carrying on with the task.' }
-    ]},
-    { title: 'Pick or start a local session', blurb: 'It asks which session gets the work.', steps: [
-      { who: 'Cloud', role: 'cloud', text: 'Which local session should do this?', choices: ['Staging auth · Desktop', 'api-server · terminal', 'Start one on my-laptop for me', "I'll open one myself"], pick: 2 },
-      { who: 'You', role: 'you', text: 'Start one for me.' },
-      { who: 'Cloud', role: 'cloud', text: 'Started a new local session in its own git worktree.' },
-      { who: 'Local', role: 'local', text: 'Ready. Working on the brief.' }
-    ]},
-    { title: 'Replies find their way back', blurb: 'No session ids to copy around.', steps: [
-      { who: 'Local', role: 'local', text: 'Done. The brief header says it came from "Fix login redirect".' },
-      { who: 'Local', role: 'local', text: 'Found that title in my session list. Sending the reply there.' },
-      { who: 'Cloud', role: 'cloud', text: 'Reply arrived in this session.' },
-      { who: 'Local', role: 'local', text: 'If the title had changed, I would match the topic instead, or ask you.' }
-    ]},
     { title: 'Run tasks in parallel', blurb: 'One session per task. You talk to one.', steps: [
       { who: 'You', role: 'you', text: 'Orchestrate these three tasks, one session each.' },
       { who: 'Orchestrator', role: 'cloud', text: 'Split into 3 tasks. Tasks 2 and 3 edit the same files.' },
@@ -354,6 +382,26 @@
       { who: 'Orchestrator', role: 'cloud', text: 'Lockfile CI failed 3 times, so I added a learned rule: run npm ci before pushing.' },
       { who: 'Orchestrator', role: 'cloud', text: 'You told me twice not to open draft PRs. Make that one of your rules?', choices: ['Add the rule (recommended)', 'Not now'], pick: 0 },
       { who: 'Orchestrator', role: 'cloud', text: 'Added. Only this session ran the review; nothing left the wiki.' }
+    ]},
+    { title: 'Tasks that need your computer', blurb: 'Let a cloud session use your machine.', steps: [
+      { who: 'Cloud', role: 'cloud', text: 'This step needs local access. I can hand it to Claude on your computer, for example to:', choices: ['Use your browser', 'Do an OAuth sign-in', 'Read local files', 'Use a desktop app', 'Call a local MCP server'] },
+      { who: 'You', role: 'you', text: 'Go ahead.' },
+      { who: 'Cloud', role: 'cloud', text: 'Handed off, with a note saying where to send the result.' },
+      { who: 'Local', role: 'local', text: 'Doing it on your machine.' },
+      { who: 'Local', role: 'local', text: 'Done. Result sent back to the cloud session.' },
+      { who: 'Cloud', role: 'cloud', text: 'Result received. Carrying on with the task.' }
+    ]},
+    { title: 'Pick or start a local session', blurb: 'It asks which session gets the work.', steps: [
+      { who: 'Cloud', role: 'cloud', text: 'Which local session should do this?', choices: ['Staging auth · Desktop', 'api-server · terminal', 'Start one on my-laptop for me', "I'll open one myself"], pick: 2 },
+      { who: 'You', role: 'you', text: 'Start one for me.' },
+      { who: 'Cloud', role: 'cloud', text: 'Started a new local session in its own git worktree.' },
+      { who: 'Local', role: 'local', text: 'Ready. Working on the brief.' }
+    ]},
+    { title: 'Replies find their way back', blurb: 'No session ids to copy around.', steps: [
+      { who: 'Local', role: 'local', text: 'Done. The brief header says it came from "Fix login redirect".' },
+      { who: 'Local', role: 'local', text: 'Found that title in my session list. Sending the reply there.' },
+      { who: 'Cloud', role: 'cloud', text: 'Reply arrived in this session.' },
+      { who: 'Local', role: 'local', text: 'If the title had changed, I would match the topic instead, or ask you.' }
     ]}
   ];
 
