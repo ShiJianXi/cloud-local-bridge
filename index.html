@@ -75,13 +75,15 @@
 }
 </script>
 
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
   :root {
     --bg: #0c0c0c; --surface: #141414; --ink: #e8e8e3; --muted: #a3a39b; --line: #2c2c2a;
-    --accent: #ffb000; --accent-ink: #0c0c0c; --local: #7fd4ff; --code: #000;
+    --accent: #ffb000; --accent-ink: #0c0c0c; --accent-hover: #ffc233; --local: #7fd4ff; --code: #000;
+    --line-hover: #4a4a46; --hover-bg: #1c1c1c;
     --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     --r: 4px;
   }
@@ -101,8 +103,9 @@
 
   header.top { height: 64px; }
   header.top .wrap { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .brand svg { color: var(--accent); }
   .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; }
-  header nav { display: flex; gap: 24px; font-size: 14px; }
+  header nav { display: flex; align-items: center; gap: 24px; font-size: 14px; }
   header nav a { color: var(--muted); text-decoration: none; }
   header nav a:hover { color: var(--ink); }
   @media (max-width: 560px) { header nav .opt { display: none; } }
@@ -110,9 +113,9 @@
   .btns { display: flex; gap: 12px; flex-wrap: wrap; }
   .btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: var(--r); font-weight: 700; text-decoration: none; }
   .btn.primary { background: var(--accent); color: var(--accent-ink); }
-  .btn.primary:hover { background: #ffc233; }
+  .btn.primary:hover { background: var(--accent-hover); }
   .btn.ghost { border: 1px solid var(--ink); }
-  .btn.ghost:hover { background: #1c1c1c; }
+  .btn.ghost:hover { background: var(--hover-bg); }
 
   .flow { margin-top: 72px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
   .flow div { padding: 24px; }
@@ -124,7 +127,7 @@
   .show { display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch; }
   .feats { flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
   .feat { width: 100%; text-align: left; min-height: 44px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r); background: transparent; color: var(--ink); font: inherit; cursor: pointer; }
-  .feat:hover { border-color: #4a4a46; }
+  .feat:hover { border-color: var(--line-hover); }
   .feat strong { display: block; font-size: 16px; }
   .feat span { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
   .feat[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
@@ -133,7 +136,7 @@
   .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
   .panel-head span { font-size: 13px; color: var(--muted); }
   .replay { min-height: 44px; padding: 0 16px; background: transparent; color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); font: inherit; font-size: 14px; cursor: pointer; }
-  .replay:hover { border-color: #4a4a46; }
+  .replay:hover { border-color: var(--line-hover); }
   .log { flex: 1 1 auto; margin: 0; padding: 20px; display: flex; flex-direction: column; gap: 14px; list-style: none; }
   .msg { display: flex; gap: 14px; align-items: flex-start; transition: opacity .4s ease; }
   .msg.hidden { opacity: 0; }
@@ -185,6 +188,12 @@
 
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .msg { transition: none; } }
+
+  :root { color-scheme: dark; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { color-scheme: light; --bg: #fafaf7; --surface: #ffffff; --ink: #161614; --muted: #5c5c55; --line: #dcdcd5; --accent: #9a5800; --accent-ink: #ffffff; --accent-hover: #b36800; --local: #0b6a94; --code: #f2f1ec; --line-hover: #b5b5ad; --hover-bg: #efefe9; } }
+  :root[data-theme="light"] { color-scheme: light; --bg: #fafaf7; --surface: #ffffff; --ink: #161614; --muted: #5c5c55; --line: #dcdcd5; --accent: #9a5800; --accent-ink: #ffffff; --accent-hover: #b36800; --local: #0b6a94; --code: #f2f1ec; --line-hover: #b5b5ad; --hover-bg: #efefe9; }
+  .theme { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: var(--r); cursor: pointer; }
+  .theme:hover { color: var(--ink); border-color: var(--line-hover); }
 </style>
 </head>
 <body>
@@ -192,7 +201,7 @@
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#top">
-      <svg width="34" height="20" viewBox="0 0 34 20" fill="none" aria-hidden="true"><circle cx="8" cy="10" r="7" fill="#ffb000"/><rect x="14" y="8.5" width="6" height="3" fill="#ffb000"/><rect x="21" y="2.5" width="11" height="15" rx="2" stroke="#ffb000" stroke-width="3"/><circle cx="26.5" cy="10" r="1.6" fill="#ffb000"/></svg>
+      <svg width="34" height="20" viewBox="0 0 34 20" fill="none" aria-hidden="true"><circle cx="8" cy="10" r="7" fill="currentColor"/><rect x="14" y="8.5" width="6" height="3" fill="currentColor"/><rect x="21" y="2.5" width="11" height="15" rx="2" stroke="currentColor" stroke-width="3"/><circle cx="26.5" cy="10" r="1.6" fill="currentColor"/></svg>
       Molt
     </a>
     <nav>
@@ -200,6 +209,7 @@
       <a class="opt" href="#features">Features</a>
       <a class="opt" href="#install">Install</a>
       <a href="https://github.com/ShiJianXi/molt">GitHub</a>
+      <button class="theme" id="theme" type="button" aria-label="Switch theme"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 0 0 13z" fill="currentColor"/></svg></button>
     </nav>
   </div>
 </header>
@@ -472,6 +482,21 @@
       });
     });
   });
+})();
+</script>
+<script>
+(function () {
+  var tc = document.querySelector('meta[name="theme-color"]'), b = document.getElementById('theme'), r = document.documentElement, m = matchMedia('(prefers-color-scheme: light)');
+  function cur() { return r.dataset.theme || (m.matches ? 'light' : 'dark'); }
+  function label() { var n = cur() === 'dark' ? 'light' : 'dark'; b.setAttribute('aria-label', 'Switch to ' + n + ' theme'); b.title = 'Switch to ' + n + ' theme'; tc.content = cur() === 'dark' ? '#0c0c0c' : '#fafaf7'; }
+  b.addEventListener('click', function () {
+    var n = cur() === 'dark' ? 'light' : 'dark';
+    r.dataset.theme = n;
+    try { localStorage.setItem('theme', n); } catch (e) {}
+    label();
+  });
+  m.addEventListener('change', label);
+  label();
 })();
 </script>
 </body>
