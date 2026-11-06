@@ -192,6 +192,10 @@ workflow. When the way of working changes, update those lines and add a page for
 Keep old workflow pages up and mark them as earlier workflows. Agents can read
 [llms.txt](https://shijianxi.github.io/molt/llms.txt).
 
+Every page has a dark and a light theme. It follows the system setting until a visitor uses the
+theme button in the header, which remembers their choice. A new page needs the same theme colors,
+the small script in `<head>` that applies the saved theme before the page draws, and the button.
+
 ## Contributing
 
 Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
