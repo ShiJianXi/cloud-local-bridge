@@ -1,4 +1,4 @@
-# Molt for Claude Code
+# Molt: Claude Code orchestration skills
 
 [![check](https://github.com/ShiJianXi/molt/actions/workflows/check.yml/badge.svg)](https://github.com/ShiJianXi/molt/actions/workflows/check.yml)
 [![version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FShiJianXi%2Fmolt%2Fmain%2F.claude-plugin%2Fplugin.json&query=%24.version&label=version)](.claude-plugin/plugin.json)
@@ -8,9 +8,11 @@
 **A Claude Code workflow kit that sheds its shell as best practices change.**
 
 Molt bundles the skills I use to work with Claude Code, and it changes as the way I work changes.
-Today it hands browser, sign-in and local-file steps from cloud sessions to your computer, runs
-related tasks in parallel sessions, tracks them on a live plan board, and keeps long-running
-orchestrators' memory in a private wiki.
+
+**Today: orchestration.** One Claude Code session acts as an orchestrator. It splits work into
+tasks, runs each in its own parallel session, tracks them on a live plan board, and keeps its own
+memory in a private wiki so it can run for weeks. It can also hand browser, sign-in and local-file
+steps from cloud sessions to your computer.
 
 *Formerly Cloud Local Bridge. Already installed it? See [Renamed from Cloud Local Bridge](#renamed-from-cloud-local-bridge).*
 
@@ -20,19 +22,26 @@ orchestrators' memory in a private wiki.
 
 ![A cloud session hands a sign-in to a local session, which does it and sends the result back](assets/demo.gif)
 
+## What is a Claude Code orchestrator?
+
+A Claude Code orchestrator is one session that plans the work and hands each task to its own
+session, instead of doing everything in one long chat. You talk only to the orchestrator. It
+starts the sessions, passes their questions to you, checks each pull request and tracks progress.
+Molt gives Claude Code the skills to work this way, in cloud sessions or on your computer.
+
 ## What it does
 
-- **Tasks that need your computer.** Browser use, OAuth sign-ins, local files, desktop apps and
-  local MCP servers. The cloud session hands the step to your computer and gets the result back.
-- **Picks the right local session.** It asks which open session should do the work, or starts a
-  new one for you.
-- **Replies find their way back.** No session ids to copy around.
 - **Runs tasks in parallel.** One session per task, and you only talk to one.
 - **Tracks big tasks on a live plan board.** See every task, its order and what blocks it.
 - **Long-running orchestrators keep a private wiki.** One per domain, read only by that session,
   so you can `/compact` or `/clear` it and it picks up where it left off.
 - **The wiki stays small and gets better.** Old items move to an archive instead of piling up,
   and the orchestrator reviews its own friction to tidy up and learn its own rules.
+- **Tasks that need your computer.** Browser use, OAuth sign-ins, local files, desktop apps and
+  local MCP servers. The cloud session hands the step to your computer and gets the result back.
+- **Picks the right local session.** It asks which open session should do the work, or starts a
+  new one for you.
+- **Replies find their way back.** No session ids to copy around.
 
 ## Install
 
@@ -64,11 +73,11 @@ Pick one. Installing two ways loads everything twice.
 
 Just ask in a cloud session:
 
-- "This needs my browser. Hand it to my computer."
-- "Read the file in my Downloads folder."
 - "Orchestrate these three tasks, one session each."
 - "Plan this and track it on a board."
 - "Own billing from now on and keep a wiki."
+- "This needs my browser. Hand it to my computer."
+- "Read the file in my Downloads folder."
 
 You need a local Claude session on the same account, connected to Remote Control. In Claude
 Desktop, turn on **Connect new sessions to Remote Control**. In a terminal, run
@@ -123,6 +132,15 @@ Code treats the new name as a different plugin, so an old install stops getting 
 
 ## FAQ
 
+**How do I orchestrate several Claude Code sessions at once?**
+Install Molt and say "orchestrate these tasks, one session each". The orchestrator starts a
+session per task, each on its own branch, and passes their questions to you in one place.
+
+**How is this different from subagents?**
+A subagent runs inside one session and reports back once. Molt's orchestrator starts full
+sessions that each open their own pull request, can ask you questions while they work, and are
+tracked on a plan board.
+
 **How do I let Claude Code on the web do something that needs my computer?**
 Install this plugin and ask the cloud session to hand that step to your computer. A local Claude
 session does it and sends the result back.
@@ -167,6 +185,14 @@ Run these from the plugin root after changing a skill:
 CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last three checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
 
 When a review finding is accepted, fix it with a check that fails before the fix and passes after it. Add that check to one of the scripts above, so CI keeps the bug from coming back.
+
+## Website
+
+The [website](https://shijianxi.github.io/molt/) lives on the `gh-pages` branch. The page title,
+description, the line under the main heading and this README's "Today" paragraph name the current
+workflow. When the way of working changes, update those lines and add a page for the new workflow.
+Keep old workflow pages up and mark them as earlier workflows. Agents can read
+[llms.txt](https://shijianxi.github.io/molt/llms.txt).
 
 ## Contributing
 
