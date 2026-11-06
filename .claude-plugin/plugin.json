@@ -1,8 +1,8 @@
 {
   "name": "molt",
   "displayName": "Molt",
-  "version": "2.4.0",
-  "description": "A Claude Code workflow kit that changes as best practices do. Today: hand browser, sign-in, desktop-app and local-file steps from a claude.ai/code session to your computer; run related tasks in parallel sessions tracked on a live plan board; and keep a private wiki for long-running orchestrators. Formerly Cloud Local Bridge.",
+  "version": "2.4.1",
+  "description": "Claude Code orchestration skills in a workflow kit that changes as best practices do. Today: an orchestrator that runs related tasks in parallel sessions, tracks them on a live plan board and keeps a private wiki so it can run for weeks. It also hands browser, sign-in and local-file steps from a claude.ai/code session to your computer. Formerly Cloud Local Bridge.",
   "author": {
     "name": "ShiJianXi"
   },
@@ -10,6 +10,12 @@
   "repository": "https://github.com/ShiJianXi/molt",
   "license": "MIT",
   "keywords": [
+    "orchestrator",
+    "claude-code-orchestrator",
+    "orchestration-skills",
+    "multi-agent",
+    "agent-orchestration",
+    "parallel-agents",
     "workflow",
     "skills",
     "claude-code",
