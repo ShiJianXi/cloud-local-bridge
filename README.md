@@ -27,7 +27,7 @@ steps from cloud sessions to your computer.
 A Claude Code orchestrator is one session that plans the work and hands each task to its own
 session, instead of doing everything in one long chat. You talk only to the orchestrator. It
 starts the sessions, passes their questions to you, checks each pull request and tracks progress.
-Molt gives Claude Code the skills to work this way, in cloud sessions or on your computer.
+Molt gives Claude Code the skills to work this way. The orchestrator runs in a claude.ai/code cloud session, and its tasks run in cloud sessions or on your computer.
 
 ## What it does
 
@@ -137,9 +137,7 @@ Install Molt and say "orchestrate these tasks, one session each". The orchestrat
 session per task, each on its own branch, and passes their questions to you in one place.
 
 **How is this different from subagents?**
-A subagent runs inside one session and reports back once. Molt's orchestrator starts full
-sessions that each open their own pull request, can ask you questions while they work, and are
-tracked on a plan board.
+A subagent runs inside one session and reports back once. Molt's orchestrator starts full sessions, each on its own branch, that can ask you questions while they work. Code tasks usually end in their own pull request, and for bigger plans with dependent tasks it offers a live plan board.
 
 **How do I let Claude Code on the web do something that needs my computer?**
 Install this plugin and ask the cloud session to hand that step to your computer. A local Claude
