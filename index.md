@@ -4,7 +4,7 @@ Molt bundles the skills its author uses to work with Claude Code, and changes as
 
 ## What is a Claude Code orchestrator?
 
-A Claude Code orchestrator is one session that plans the work and hands each task to its own session, instead of doing everything in one long chat. You talk only to the orchestrator. It starts the sessions, passes their questions to you, checks each pull request and tracks progress. Molt gives Claude Code the skills to work this way, in cloud sessions or on your computer. See [Claude Code orchestrator](https://shijianxi.github.io/molt/orchestrator/index.md).
+A Claude Code orchestrator is one session that plans the work and hands each task to its own session, instead of doing everything in one long chat. You talk only to the orchestrator. It starts the sessions, passes their questions to you, checks each pull request and tracks progress. Molt gives Claude Code the skills to work this way. The orchestrator runs in a claude.ai/code cloud session, and its tasks run in cloud sessions or on your computer. See [Claude Code orchestrator](https://shijianxi.github.io/molt/orchestrator/index.md).
 
 ## The skills in the kit
 
@@ -25,7 +25,7 @@ Or in a local Claude Code session: `/plugin install molt --marketplace ShiJianXi
 
 **How do I orchestrate several Claude Code sessions at once?** Install Molt and say "orchestrate these tasks, one session each". The orchestrator starts a session per task, each on its own branch, and passes their questions to you in one place.
 
-**How is this different from subagents?** A subagent runs inside one session and reports back once. Molt's orchestrator starts full sessions that each open their own pull request, can ask you questions while they work, and are tracked on a plan board.
+**How is this different from subagents?** A subagent runs inside one session and reports back once. Molt's orchestrator starts full sessions, each on its own branch, that can ask you questions while they work. Code tasks usually end in their own pull request, and for bigger plans with dependent tasks it offers a live plan board.
 
 **Can I clear or compact a long-running orchestrator?** Yes, if it keeps a wiki. Prefer `/compact`; after `/clear`, say "resume my billing orchestrator" and it reads the wiki first.
 

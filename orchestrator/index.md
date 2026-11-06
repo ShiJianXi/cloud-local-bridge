@@ -13,7 +13,7 @@ A Claude Code orchestrator is one session that plans the work and hands each tas
 
 ## How to orchestrate Claude Code sessions with Molt
 
-1. **Install Molt.** On claude.ai, open [Customize → Plugins](https://claude.ai/customize/plugins), find Molt under Discover and choose Add. Start a new session.
+1. **Install Molt.** On claude.ai, open [Customize → Plugins](https://claude.ai/customize/plugins), find Molt under Discover and choose Add. Start a new session on [claude.ai/code](https://claude.ai/code): the orchestrator runs in a cloud session.
 2. **Ask for orchestration.** Say "orchestrate these tasks, one session each" and list them.
 3. **Pick where they run.** The orchestrator asks whether to run them in the cloud or on your computer, and warns you when two tasks touch the same files.
 4. **Answer in one place.** Each task runs in its own session and branch. Their questions come to you through the orchestrator.
@@ -43,16 +43,16 @@ The wiki doesn't grow forever. Old items move to a monthly archive, and about on
 | | One session | Subagents | Molt orchestrator |
 |---|---|---|---|
 | Where work runs | One chat | Inside one session | A full session per task |
-| Pull requests | One branch | Through the parent | One per task |
+| Pull requests | One branch | Through the parent | Usually one per task |
 | Asks you questions | Yes | Reports back once | Yes, relayed to you |
-| Progress tracking | None | None | Live plan board |
+| Progress tracking | None | None | Live plan board, offered for bigger plans |
 | Survives /clear | No | No | Yes, with a wiki |
 
 ## Questions
 
 **What are Claude Code orchestration skills?** Skills that teach Claude Code to coordinate several sessions: split the work, start a session per task, relay questions, track progress and check results. Molt ships three: orchestrate, artifact-plan and orchestrator-wiki.
 
-**Does it work with Claude Code on the web?** Yes. The orchestrator can run its tasks in cloud sessions, or on your computer through Remote Control.
+**Does it work with Claude Code on the web?** Yes, that's where the orchestrator runs. Its tasks run in cloud sessions, or on your computer through Remote Control.
 
 **Is it free?** Yes. Free and open source under the MIT license. No servers and no data collected.
 

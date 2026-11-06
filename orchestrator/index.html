@@ -26,7 +26,7 @@
       "description": "Use one Claude Code session as an orchestrator that runs each task in its own session and tracks them on a plan board.",
       "tool": { "@type": "SoftwareApplication", "name": "Molt", "url": "https://shijianxi.github.io/molt/" },
       "step": [
-        { "@type": "HowToStep", "name": "Install Molt", "text": "On claude.ai, open Customize, Plugins, find Molt under Discover and choose Add. Start a new session." },
+        { "@type": "HowToStep", "name": "Install Molt", "text": "On claude.ai, open Customize, Plugins, find Molt under Discover and choose Add. Start a new session on claude.ai/code, where the orchestrator runs." },
         { "@type": "HowToStep", "name": "Ask for orchestration", "text": "Say \"orchestrate these tasks, one session each\" and list the tasks." },
         { "@type": "HowToStep", "name": "Answer in one place", "text": "The orchestrator starts a session per task, each on its own branch, and relays their questions to you." },
         { "@type": "HowToStep", "name": "Track the plan board", "text": "Say \"plan this and track it on a board\" for a live board of tasks, their order and blockers." },
@@ -97,7 +97,7 @@
 
   <h2>How to orchestrate Claude Code sessions with Molt</h2>
   <ol>
-    <li><strong>Install Molt.</strong> On claude.ai, open <a href="https://claude.ai/customize/plugins">Customize → Plugins</a>, find Molt under Discover and choose Add. Start a new session.</li>
+    <li><strong>Install Molt.</strong> On claude.ai, open <a href="https://claude.ai/customize/plugins">Customize → Plugins</a>, find Molt under Discover and choose Add. Start a new session on <a href="https://claude.ai/code">claude.ai/code</a>: the orchestrator runs in a cloud session.</li>
     <li><strong>Ask for orchestration.</strong> Say "orchestrate these tasks, one session each" and list them.</li>
     <li><strong>Pick where they run.</strong> The orchestrator asks whether to run them in the cloud or on your computer, and warns you when two tasks touch the same files.</li>
     <li><strong>Answer in one place.</strong> Each task runs in its own session and branch. Their questions come to you through the orchestrator.</li>
@@ -121,15 +121,15 @@ Review the wiki.</pre>
   <div class="tbl"><table>
     <tr><th></th><th>One session</th><th>Subagents</th><th>Molt orchestrator</th></tr>
     <tr><th>Where work runs</th><td>One chat</td><td>Inside one session</td><td>A full session per task</td></tr>
-    <tr><th>Pull requests</th><td>One branch</td><td>Through the parent</td><td>One per task</td></tr>
+    <tr><th>Pull requests</th><td>One branch</td><td>Through the parent</td><td>Usually one per task</td></tr>
     <tr><th>Asks you questions</th><td>Yes</td><td>Reports back once</td><td>Yes, relayed to you</td></tr>
-    <tr><th>Progress tracking</th><td>None</td><td>None</td><td>Live plan board</td></tr>
+    <tr><th>Progress tracking</th><td>None</td><td>None</td><td>Live plan board, offered for bigger plans</td></tr>
     <tr><th>Survives /clear</th><td>No</td><td>No</td><td>Yes, with a wiki</td></tr>
   </table></div>
 
   <h2>Questions</h2>
   <p><strong>What are Claude Code orchestration skills?</strong><br>Skills that teach Claude Code to coordinate several sessions: split the work, start a session per task, relay questions, track progress and check results. Molt ships three: orchestrate, artifact-plan and orchestrator-wiki.</p>
-  <p><strong>Does it work with Claude Code on the web?</strong><br>Yes. The orchestrator can run its tasks in cloud sessions, or on your computer through Remote Control.</p>
+  <p><strong>Does it work with Claude Code on the web?</strong><br>Yes, that's where the orchestrator runs. Its tasks run in cloud sessions, or on your computer through Remote Control.</p>
   <p><strong>Is it free?</strong><br>Yes. Free and open source under the MIT license. No servers and no data collected.</p>
 
   <p class="note">Orchestration is today's workflow in Molt. Molt is a workflow kit that changes as Claude Code best practices do, and this page will stay up when the next way of working arrives. <a href="../">See the whole kit</a>.</p>
