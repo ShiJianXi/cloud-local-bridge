@@ -1,0 +1,22 @@
+# Molt
+
+> Molt is a free, open-source Claude Code plugin: a workflow kit that sheds its shell as Claude Code best practices change. Today it ships orchestration skills. One Claude Code session acts as an orchestrator that runs related tasks in parallel sessions, tracks them on a live plan board, and keeps a private wiki so it can run for weeks. It also hands browser, sign-in and local-file steps from cloud sessions to your computer.
+
+Install: on claude.ai open Customize → Plugins, find Molt under Discover and choose Add. Or, in a local Claude Code session: `/plugin install molt --marketplace ShiJianXi/molt`. MIT license. No servers, hooks or data collection. Formerly called Cloud Local Bridge.
+
+## Pages
+
+- [Overview](https://shijianxi.github.io/molt/index.md): what Molt is, its four skills, install and FAQ
+- [Claude Code orchestrator](https://shijianxi.github.io/molt/orchestrator/index.md): how to run parallel Claude Code sessions from one chat, step by step
+
+## Skills
+
+- [orchestrate](https://github.com/ShiJianXi/molt/blob/main/skills/orchestrate/SKILL.md): split work into tasks and run each in its own Claude Code session, cloud or local
+- [artifact-plan](https://github.com/ShiJianXi/molt/blob/main/skills/artifact-plan/SKILL.md): live plan board of tasks, their order and blockers
+- [orchestrator-wiki](https://github.com/ShiJianXi/molt/blob/main/skills/orchestrator-wiki/SKILL.md): private wiki so a long-running orchestrator survives /compact and /clear
+- [cloud-local-bridge](https://github.com/ShiJianXi/molt/blob/main/skills/cloud-local-bridge/SKILL.md): hand browser, OAuth, local-file and desktop-app steps from a cloud session to your computer
+
+## Optional
+
+- [README](https://github.com/ShiJianXi/molt#readme)
+- [Privacy policy](https://github.com/ShiJianXi/molt/blob/main/PRIVACY.md)
