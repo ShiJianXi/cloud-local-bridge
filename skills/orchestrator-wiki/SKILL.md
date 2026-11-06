@@ -84,8 +84,8 @@ If the Artifact tool or `ArtifactData` isn't available, say so in one line and g
      `charter` gets the domain, what is in and out of scope, and any standing rules the user
      gave. The others start with `items: []`.
    - `log/e1`: `{at, text: "Wiki created for <domain>."}`.
-3. Tell the user in one line: the link, that only they and this session can read it, and that
-   after `/compact` or `/clear` they say "resume my <domain> orchestrator" to pick it back up.
+3. Tell the user in one line: the link, that only they and this session can read it, to prefer
+   `/compact` over `/clear`, and that after `/clear` they say "resume my <domain> orchestrator".
 
 ## 3. Write only when necessary
 
@@ -154,6 +154,10 @@ finishes or is archived (overwrite `state`); a plan board is created (add `{titl
 
 Never write: child progress reports, CI runs, transcripts, tool output, diffs, guesses, plans the
 user hasn't approved, anything about another domain or thread, secrets or credentials.
+
+After each wiki write, end your reply with one short line, "<domain> orchestrator, working from its
+wiki." Nothing reloads the wiki for you, so this keeps the role in any automatic compaction's
+summary. Never put the link in that line.
 
 Each write is one `ArtifactData` `batch`, pinned with the `if_version` you last read: the page
 change (with `updatedAt`) plus one `log/e<n>` line saying which page and why, where `n` is

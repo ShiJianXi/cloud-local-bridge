@@ -100,7 +100,8 @@ git worktree and can use your browser.
   Desktop drops them after 5 minutes.
 - An orchestrator with a wiki writes to it only when a fact would otherwise be lost. Only that
   session reads it. After `/compact`, `/clear` or a restart, say "resume my <domain>
-  orchestrator" and it reads the wiki before anything else. Molt ships no hooks, so nothing runs
+  orchestrator" and it reads the wiki before anything else. Prefer `/compact`: the orchestrator restates its role
+  after each wiki write, so an automatic compaction usually keeps it working from the wiki. Molt ships no hooks, so nothing runs
   on its own when a session starts.
 - The wiki page shows what needs you first, then a card for each piece of work, then the
   decisions and gotchas. Ids and tool names are kept in a "Technical details" fold. A wiki made
