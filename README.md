@@ -99,8 +99,10 @@ git worktree and can use your browser.
 - Don't use bypass-permissions mode for the local session. It holds messages from the cloud, and
   Desktop drops them after 5 minutes.
 - An orchestrator with a wiki writes to it only when a fact would otherwise be lost. Only that
-  session reads it. After `/compact` or `/clear` it picks the wiki back up by itself; after a
-  restart, say "resume my <domain> orchestrator".
+  session reads it. After `/compact`, `/clear` or a restart, say "resume my <domain>
+  orchestrator" and it reads the wiki before anything else. Prefer `/compact`: the orchestrator restates its role
+  after each wiki write, so an automatic compaction usually keeps it working from the wiki. Molt ships no hooks, so nothing runs
+  on its own when a session starts.
 - The wiki page shows what needs you first, then a card for each piece of work, then the
   decisions and gotchas. Ids and tool names are kept in a "Technical details" fold. A wiki made
   before 2.1.0 switches to this layout the next time it's resumed or written to.
@@ -131,8 +133,8 @@ for you.
 
 **Can I clear or compact a long-running orchestrator?**
 Yes, if it keeps a wiki. Ask it to own a domain and keep a wiki. It saves decisions and what's
-running as they happen, so `/compact` and `/clear` lose nothing. Each wiki is private to the one
-session that owns it.
+running as they happen, so `/compact` and `/clear` lose nothing: afterwards, say "resume my
+<domain> orchestrator". Each wiki is private to the one session that owns it.
 
 **Won't a wiki kept for months get huge?**
 No. The pages read on every resume stay capped. What falls off them goes to a monthly archive in
@@ -146,7 +148,7 @@ tells each child which plugins it uses and where they live, and the child loads 
 itself.
 
 **Does it collect any data?**
-No. It has no servers and makes no network calls. See the [privacy policy](PRIVACY.md).
+No. It has no servers, no hooks and no scripts that make network calls. See the [privacy policy](PRIVACY.md).
 
 **Is it free?**
 Yes. Free and open source.
@@ -157,13 +159,12 @@ Run these from the plugin root after changing a skill:
 
 - `claude plugin eval . --tag artifact-plan`: three cases in `evals/artifact-plan/`.
 - `claude plugin eval . --tag orchestrator-wiki`: nine cases in `evals/orchestrator-wiki/`.
-- `sh hooks/test_wiki_binding.sh`: checks the wiki binding script.
 - `node skills/orchestrator-wiki/test_wiki_page.mjs`: checks the wiki page shows learned rules, the
   last review and the archive.
 - `python3 skills/artifact-plan/scripts/validate_plan.py --selftest`: checks the plan validator.
 - `sh skills/orchestrate/test_plugin_block.sh`: checks the brief's plugin-loading block.
 
-CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last four checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
+CI (`.github/workflows/check.yml`) runs `claude plugin validate .`, the last three checks and a check that skill frontmatter has no `<` or `>` (claude.ai strips them from descriptions) on every pull request. The evals call the model, so CI leaves them out. Run them by hand before a release.
 
 When a review finding is accepted, fix it with a check that fails before the fix and passes after it. Add that check to one of the scripts above, so CI keeps the bug from coming back.
 

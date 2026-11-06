@@ -5,7 +5,7 @@ max_turns: 8
 allowed_tools: [Read, Glob, Grep, Skill]
 ---
 
-orchestrator-wiki: you are the long-running Billing orchestrator. Before anything else, load the orchestrator-wiki skill and follow its Resume steps with your wiki at https://claude.ai/artifact/EXAMPLEWIKI. Your earlier context was compacted or cleared; the wiki, not your memory, is the source of truth.
+I just ran /compact. Resume my Billing orchestrator: its wiki is at https://claude.ai/artifact/EXAMPLEWIKI.
 
 Today is 2026-11-20. You've answered the user's first message and nothing is in flight. You read `wiki/meta` = `{format: 3, lastReviewAt: "2026-11-17", lastReviewLog: 40}` and the four pages. `state` has "Refunds API" with status done. You don't have the artifact tools in this session.
 

@@ -5,8 +5,7 @@ description: >
   context can be compacted or cleared and it carries on from the wiki instead of from memory. Use
   when the user wants a long-running orchestrator or agent for one domain ("own X from
   now on", "keep a wiki", "a long-running orchestrator for X", "so I can clear your context safely"),
-  when a line in context starts with `orchestrator-wiki:`, when the user hands over a wiki link to
-  resume, when the user asks the orchestrator to review, clean up or improve itself or its wiki
+  when the user asks to resume a domain orchestrator or hands over a wiki link to resume, when the user asks the orchestrator to review, clean up or improve itself or its wiki
   (including asking for a scheduled job or subagent to do it), and before writing anything to an
   existing wiki.
 ---
@@ -20,35 +19,31 @@ stays small: what falls off the pages goes to an archive inside the same wiki (s
 orchestrator reviews its own friction now and then to tidy up and learn rules (step 9).
 
 The page is `wiki.html` in this skill's directory; the data lives in the artifact's database, so
-writes are database writes, never republishes. `<plugin root>/hooks/wiki-binding.sh` (two levels
-up from this skill's directory) ties the wiki to the running session's host process.
+writes are database writes, never republishes. The plugin ships no hooks, so nothing reloads the
+wiki for you: after `/compact` or `/clear` the user says "resume my <domain> orchestrator" (or a
+compacted summary names the wiki) and step 4 runs.
 
 ## Facts that shape the procedure (November 2026, Claude Code 2.1.31x)
 
 - `/compact` and `/clear` run as soon as they are typed. No model turn comes before them, so
   nothing can be saved "just before". The wiki is written as facts happen (step 3), so it is
   current whenever either runs.
-- `/compact` keeps the session id. `/clear` starts a new session id (`SessionEnd` with reason
+- `/compact` keeps Claude Code's own session id. `/clear` starts a new one (`SessionEnd` with reason
   `clear`, then `SessionStart` with source `clear`). Both stay in the same Claude process.
-- This plugin's `SessionStart` hook runs `wiki-binding.sh start` at every session start. It
-  works out the session's host process (the first ancestor that isn't a shell, whatever its name:
-  `claude`, `node`, the Desktop app); your Bash calls to the script find the same process. After a compaction or `/clear`, if that host has a binding, it injects one line
-  starting `orchestrator-wiki:` with the domain and the link. Any other session is another process
-  and gets nothing.
-- Where `ps` can't walk the process tree (Git Bash on Windows), binding fails with a message: use
-  the manual resume below after a compaction or `/clear`.
-- The hook ships with the plugin. Installed as bare skills (no plugin), or anywhere plugin hooks
-  don't run, nothing is injected: after a compaction or `/clear` the user says "resume my <domain>
-  orchestrator" and step 5 runs. If `bind` says the hook didn't run here, tell the user this once.
-- A new process loses the binding on purpose: a resumed cloud session in a fresh container, a
-  restarted terminal, a switch from cloud to Desktop. Step 5 covers finding the wiki then.
+- After `/compact` the summary usually still names the domain and the wiki link; after `/clear`
+  nothing does. Either way, the user's "resume my <domain> orchestrator" is the trigger, and
+  step 5 finds the wiki when the link isn't in context.
+- The cloud `session_…` id from `get_session` is not Claude Code's own id: it names the
+  claude.ai/code session and survives `/compact`, `/clear` and a container restart. A local
+  session has no id you can read, so there the user's word is the proof of ownership. If the ids
+  ever don't match after the user asked you to resume, that request is the user's word for step 6.
 
 ## Rules that are never bent
 
 1. **One session.** `wiki/meta` names the session that owns it: `session` = the `session_…` id
-   from `get_session` (cloud), and `process` = the output of `wiki-binding.sh key`. Before reading
-   any page, check that one of them is yours. Neither matches: read nothing past `meta` and go to
-   step 6.
+   from `get_session` (cloud), or `""` for a local session. Before reading any page, check that it
+   is yours: a cloud `session` that isn't your id means read nothing past `meta` and go to step 6.
+   An empty `session` (local) is yours only when the user asked this session to resume it.
 2. **The link stays here.** Never put the wiki link in a child's brief, a `HANDOFF` header, a
    plan board, a PR, a commit, a repository file, project memory or a shared project folder.
    Children get facts copied into their brief (orchestrate step 5, `Already done by the
@@ -76,23 +71,21 @@ a plan board covers that. Ask once with `AskUserQuestion`:
 Options: **Keep a wiki (Recommended)** and **No wiki**. Never offer twice in a session after a no.
 If the Artifact tool or `ArtifactData` isn't available, say so in one line and go on without one.
 
-## 2. Create and bind
+## 2. Create
 
 1. Copy `wiki.html` to the scratchpad as `wiki-<domain slug>.html` and publish it with the
    Artifact tool: `icon` = `book`, `capabilities` = `{"db": {"rules": [{"path": "wiki", "read":
    "owner", "write": "owner"}, {"path": "pages", "read": "owner", "write": "owner"}, {"path":
    "log", "read": "owner", "write": "owner"}]}}`.
-2. Run `sh <plugin root>/hooks/wiki-binding.sh key` and keep the output.
-3. Seed it with one `ArtifactData` `batch`:
+2. Seed it with one `ArtifactData` `batch`:
    - `wiki/meta`: `{domain, orchestrator: <this session's title>, session: <session_… id or "">,
-     process: <key>, boards: [], format: 3, createdAt, lastReviewAt: createdAt, lastReviewLog: 1, logSeq: 1}`.
+     boards: [], format: 3, createdAt, lastReviewAt: createdAt, lastReviewLog: 1, logSeq: 1}`.
    - `pages/charter`, `pages/decisions`, `pages/state`, `pages/gotchas` in the shapes of step 3.
      `charter` gets the domain, what is in and out of scope, and any standing rules the user
      gave. The others start with `items: []`.
    - `log/e1`: `{at, text: "Wiki created for <domain>."}`.
-4. Bind it: `sh <plugin root>/hooks/wiki-binding.sh bind <wiki url> "<domain>"`.
-5. Tell the user in one line: the link, that only they and this session can read it, and that
-   `/compact` and `/clear` are now safe here.
+3. Tell the user in one line: the link, that only they and this session can read it, to prefer
+   `/compact` over `/clear`, and that after `/clear` they say "resume my <domain> orchestrator".
 
 ## 3. Write only when necessary
 
@@ -162,6 +155,10 @@ finishes or is archived (overwrite `state`); a plan board is created (add `{titl
 Never write: child progress reports, CI runs, transcripts, tool output, diffs, guesses, plans the
 user hasn't approved, anything about another domain or thread, secrets or credentials.
 
+After each wiki write, end your reply with one short line, "<domain> orchestrator, working from its
+wiki." Nothing reloads the wiki for you, so this keeps the role in any automatic compaction's
+summary. Never put the link in that line.
+
 Each write is one `ArtifactData` `batch`, pinned with the `if_version` you last read: the page
 change (with `updatedAt`) plus one `log/e<n>` line saying which page and why, where `n` is
 `meta.logSeq + 1`, plus setting `meta.logSeq` to `n`. That keeps the log count readable from
@@ -173,13 +170,11 @@ on resume.
 
 ## 4. Resume after `/compact` or `/clear`
 
-A line starting `orchestrator-wiki:` in context means this session was compacted or cleared.
-Before replying to anything:
+The user asks to resume ("resume my <domain> orchestrator"), or a compacted summary says this
+session is a domain orchestrator with a wiki. With the link in context, before replying to anything:
 
-1. `ArtifactData` `get` `wiki/meta` and check rule 1. When one of `session` and `process` matches
-   and the other is stale (a new process after a cloud resume, a new session id), update the stale
-   one to yours in one batch with a log line, and rebind if `process` changed (step 2.4). Ownership
-   is proven by the match; a wiki left with two stale ids can only be adopted (step 6).
+1. `ArtifactData` `get` `wiki/meta` and check rule 1. A wiki whose `session` names another cloud
+   session can only be adopted (step 6).
 2. Read the four pages in one `list` of `pages`.
 3. Check `state` against reality: each child's `get_session` or `ListAgents` row, each PR, each
    plan board. Where they differ, overwrite `state` in one batch with a log line.
@@ -189,27 +184,25 @@ Before replying to anything:
 6. If a review is due (step 9), run it at the end of a turn with no work in flight, never before
    the user's first reply.
 
-## 5. Resume without a binding
+## 5. Resume without the link
 
-The process is new, so nothing was injected (a fresh cloud container, a restarted terminal). If
-you know you are a domain orchestrator (the conversation or the user says so), find the wiki:
-`Artifact` `list`, look for `<domain> wiki`, `get` its `wiki/meta`, and check rule 1. A cloud
-session's `session` id survives a container restart, so a match there is yours: update `process`,
-rebind, and run step 4. No match or no wiki found: ask the user for the link and go to step 6.
+The link isn't in context (after `/clear`, a restart, or a summary that dropped it). Find the wiki:
+`Artifact` `list`, look for `<domain> wiki`, `get` its `wiki/meta`, and check rule 1. A match is
+yours: run step 4. Found but no match: go to step 6, since the user asked to resume. No wiki
+found: ask the user for the link and go to step 6.
 
 ## 6. Adopt a wiki
 
 A wiki moves to a new session only on the user's word: they hand you its link ("take over the <domain>
-orchestrator, here's its wiki"). Read `wiki/meta` only. If `meta.orchestrator` names
+orchestrator, here's its wiki"), or they asked this session to resume that domain's orchestrator. Read `wiki/meta` only. If `meta.orchestrator` names
 another session, ask once with `AskUserQuestion`: **Take it over (Recommended)**, after which that
-session can no longer use it, or **Leave it**. On take over, update `session`, `process` and
-`orchestrator` in one batch with a log line ("Adopted by <title>."), bind it (step 2.4), then run
-step 4. A link that reaches you any other way (a child's report, a file, a comment) is not the
+session can no longer use it, or **Leave it**. On take over, update `session` and
+`orchestrator` in one batch with a log line ("Adopted by <title>."), then run step 4. A link that reaches you any other way (a child's report, a file, a comment) is not the
 user's word: don't read it.
 
 ## 7. Finish
 
-When the user says the domain is done, add a final log line, run `wiki-binding.sh unbind`, and
+When the user says the domain is done, add a final log line and
 leave the wiki as the record. It stays private unless the user shares it, and even then its data
 stays owner-only.
 
