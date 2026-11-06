@@ -92,7 +92,8 @@ git worktree and can use your browser.
 - A cloud session started by another session can come up without your claude.ai plugins. The
   orchestrator lists the plugins it has in each child's brief, and a child that's missing one
   attaches the plugin's repository and links its skills in, so they load mid-session. Only the
-  skills come across, not the plugin's hooks or MCP servers. A plugin step that must happen (say,
+  skills come across, not the plugin's hooks or MCP servers. Attaching a plugin's repository needs
+  your yes, so the orchestrator asks once before it starts the children. A plugin step that must happen (say,
   a script whose output goes in the PR) goes in the child's "done when", and the orchestrator
   checks it before calling the task done.
 - Don't use bypass-permissions mode for the local session. It holds messages from the cloud, and

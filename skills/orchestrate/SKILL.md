@@ -83,6 +83,12 @@ to the orchestrator, never to the user.
      ~/.claude/plugins/synced/*/*/.claude-plugin/plugin.json`. Keep the ones the task uses; that list is the
      brief's `Plugins` line. A plugin with no `repository` there: ask the user where it lives, or
      leave it out and say so.
+     Attaching a plugin's repository with `add_repo` widens what the child can reach, and the
+     child's auto-mode check blocks it unless the user approved it: a brief alone isn't the
+     user's approval. So ask the user once, with `AskUserQuestion`, for all the children:
+     "Let the children attach <owner/repo, ...> to load those plugins?" On a yes, put it in each
+     brief's `Allowed` line. On a no, leave those plugins out of `Plugins` and tell the user
+     which plugin steps the children can't do.
      Any plugin step the task must not skip (a script whose output goes in the PR, a required
      check) goes into that child's `Done when` as an observable result, e.g. "PR's Cost section
      filled from the plugin's cost script". Then a child that couldn't load the plugin fails
@@ -108,8 +114,9 @@ to the orchestrator, never to the user.
    Task: <one task>. Only this one; sibling sessions own <the other tasks>.
    Branch: <branch>
    Done when: <observable result, e.g. PR open and CI green>
-   Allowed: <every write the user approved for this task>. Never merge, approve, start other
-     sessions, or touch a sibling's branch or item.
+   Allowed: <every write the user approved for this task>. <If the user approved it in step 4:
+     "The user approved attaching <owner/repo, ...> with add_repo, only to load their plugins.">
+     Never merge, approve, start other sessions, or touch a sibling's branch or item.
    Already done by the orchestrator: <shared work from step 2, facts found, decisions made>
    Siblings touch: <files or areas other tasks change; stay out of them or say why you can't>
    Plugins (cloud child only): <name> (<owner/repo>), one per plugin from step 4. For each one
@@ -118,7 +125,8 @@ to the orchestrator, never to the user.
      load after your next tool call, without the "<name>:" prefix; where a skill says
      ${CLAUDE_PLUGIN_ROOT}, use the plugin folder the block prints. Never write "not reported"
      or skip a step because a plugin wasn't loaded; if it still can't be, or the block printed
-     "skipped", say so in your report.
+     "skipped", say so in your report. If add_repo is refused, don't retry it or find another way
+     in: send the orchestrator the refusal at once, then carry on with what doesn't need it.
    Reply: send_message to <your session_… id>, never to the user. Send when: <milestones, e.g. PR
      open, CI green>, and when blocked on a decision. First line: one sentence with the outcome or
      the question.
@@ -151,6 +159,8 @@ to the orchestrator, never to the user.
 7. **Relay and direct.** Match each incoming message's sender against the table. For each child
    message:
    - Milestone: pass it to the user in one line.
+   - Plugin attach refused: tell the user which child and repository. They can allow it on that
+     child's session page, or say the step can be skipped.
    - Done (its `Done when` is met): check each plugin step in `Done when` yourself (read the PR
      or its output). If one is missing or says "not reported", send the child back to do it. Then pass the outcome on, then ask the user with `AskUserQuestion`
      whether to archive that child's session. Options: **Keep it** (first; an archived child stops
